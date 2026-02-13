@@ -8,7 +8,6 @@ export default function Index() {
   const [usdRate, setUsdRate] = useState(null);
   const [countdown, setCountdown] = useState(null);
 
-  // -------------------- Welcome typing --------------------
   const welcomeMsg ="به دنیای بازی خوش آمدید اینجا جایی است که سرگرمی و هیجان با یکدیگر ترکیب می شوند ";
   const [typedText, setTypedText] = useState("");
 
@@ -38,7 +37,7 @@ export default function Index() {
   //   return () => window.removeEventListener("scroll", handleScroll);
   // }, []);
 
-  // -------------------- Dark / Light Mode --------------------
+  // -------------------- Dark and Light Mode --------------------
   const [isLight, setIsLight] = useState(
     localStorage.getItem("theme") === "light",
   );
@@ -82,13 +81,13 @@ export default function Index() {
           );
         }
 
-        // تایمر شمارش معکوس
+
         interval = setInterval(() => {
           const remaining = expiry - Date.now();
           if (remaining <= 0) {
             clearInterval(interval);
             setCountdown(0);
-            fetchUsdRate(); // وقتی رسید به صفر دوباره API زده شود
+            fetchUsdRate();
           } else {
             setCountdown(remaining);
           }

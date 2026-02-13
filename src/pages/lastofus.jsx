@@ -12,7 +12,6 @@ export default function TheLastOfUs() {
       <h2 className="text-4xl font-bold text-center mb-8">The Last of Us</h2>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* سمت چپ: عکس‌ها */}
         <div className="flex flex-col gap-4 lg:w-1/2">
           <img
             src="/last1.webp"
@@ -41,7 +40,7 @@ export default function TheLastOfUs() {
           />
         </div>
 
-        {/* سمت راست: متن */}
+
         <div className="lg:w-1/2 space-y-6 text-right rtl">
           <p className="text-[#c27575] text-lg ">
             آخرین بازمانده از ما[۱] (انگلیسی: The Last of Us) یک بازی ویدئویی
@@ -70,7 +69,6 @@ export default function TheLastOfUs() {
             ۱۴ فوریه ۲۰۱۴ عرضه گردید. دنبالهٔ این بازی با عنوان آخرین بازمانده
             از ما قسمت ۲ در دسامبر ۲۰۱۶ رونمایی شد و در تاریخ ۱۹ ژوئن ۲۰۲۰ به
             صورت انحصاری برای کنسول پلی‌استیشن ۴ منتشر شد.
-            {/* ادامه متن کامل خودت */}
           </p>
 
           <h3 className="text-yellow-400 text-2xl font-semibold">گیم پلی</h3>
@@ -118,7 +116,7 @@ export default function TheLastOfUs() {
             اطمینان کامل دارد…
           </p>
 
-          {/* جدول سیستم مورد نیاز */}
+
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex-1">
               <h5 className="text-yellow-400 font-semibold mb-2">
