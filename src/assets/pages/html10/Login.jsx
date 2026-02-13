@@ -45,13 +45,12 @@ export default function Login() {
   return (
     <div
       className="min-h-screen flex items-center justify-center  bg-cover bg-center md:px-20"
-      style={{ backgroundImage: "url('/rzer.png')" }}
+      style={{ backgroundImage: "url('/rzer.webp')" }}
     >
       <div className="w-[460px] bg-black/30 rounded-2xl p-10 text-white backdrop-blur">
-
         <div className="flex justify-center mb-4">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-            <img src="/logo.jpg" className="w-20 rounded-4xl" />
+            <img src="/logo.webp" className="w-20 rounded-4xl" />
           </div>
         </div>
 
@@ -73,12 +72,11 @@ export default function Login() {
 
             return (
               <Form className="space-y-6">
-
                 {/* phone input */}
                 <div className="relative">
                   <div className="flex bg-white rounded-md overflow-hidden text-black">
                     <div className="px-2 flex items-center">
-                      <img src="iran.png" alt="" className="w-8" />
+                      <img src="iran.webp" alt="" className="w-8" />
                     </div>
                     <div className="px-2 text-gray-500 flex items-center">
                       +98
@@ -93,9 +91,7 @@ export default function Login() {
                     />
                   </div>
                   {errors.phone && touched.phone && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.phone}
-                    </p>
+                    <p className="text-red-400 text-sm mt-1">{errors.phone}</p>
                   )}
                 </div>
 
@@ -105,7 +101,7 @@ export default function Login() {
                   disabled={!isValid}
                   className={`w-full py-3 rounded-md transition-all duration-300 ${
                     isValid
-                      ?  "bg-red-500 text-white transition-all=.4s hover:bg-red-600"
+                      ? "bg-red-500 text-white transition-all=.4s hover:bg-red-600"
                       : "bg-gray-400 text-gray-900 cursor-not-allowed"
                   }`}
                 >
@@ -121,7 +117,6 @@ export default function Login() {
                     عضو شوید
                   </span>
                 </p>
-
               </Form>
             );
           }}

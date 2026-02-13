@@ -5,7 +5,9 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const schema = Yup.object({
-  phone: Yup.string().matches(/^09\d{9}$/).required(),
+  phone: Yup.string()
+    .matches(/^09\d{9}$/)
+    .required(),
   name: Yup.string().required(),
 });
 
@@ -45,13 +47,12 @@ export default function Register() {
   return (
     <div
       className="min-h-screen flex items-center justify-center md:justify- bg-cover bg-center md:px-20 "
-      style ={{ backgroundImage: "url('/rzer.png')" }}
+      style={{ backgroundImage: "url('/rzer.webp')" }}
     >
       <div className="w-[460px] bg-black/10 rounded-2xl p-10 text-white backdrop-blur">
-
         <div className="flex justify-center mb-4">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-            <img src="/logo.jpg" className="w-20 rounded-4xl" />
+            <img src="/logo.webp" className="w-20 rounded-4xl" />
           </div>
         </div>
 
@@ -62,9 +63,7 @@ export default function Register() {
           initialValues={{ phone: "", name: "" }}
           validationSchema={schema}
           onSubmit={(values) => {
-            toast.success(
-              `${values.name} عزیز، کد تایید برای شما ارسال شد`
-            );
+            toast.success(`${values.name} عزیز، کد تایید برای شما ارسال شد`);
 
             navigate("/Code", {
               state: { phone: values.phone },
@@ -77,12 +76,11 @@ export default function Register() {
 
             return (
               <Form className="space-y-6">
-
                 {/* phone */}
                 <div className="relative">
                   <div className="flex bg-white rounded-md overflow-hidden text-black">
                     <div className="px-2 flex items-center">
-                      <img src="iran.png" alt="" className="w-8" />
+                      <img src="iran.webp" alt="" className="w-8" />
                     </div>
                     <div className="px-2 text-gray-500 flex items-center">
                       +98
@@ -154,12 +152,11 @@ export default function Register() {
                   type="button"
                   className="w-full border border-white rounded-md py-3 flex items-center justify-center gap-2"
                 >
-                  <img src="/google.png" className="w-5" />
+                  <img src="/google.webp" className="w-5" />
                   <span className="bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500 bg-clip-text text-transparent font-semibold">
                     ورود با گوگل
                   </span>
                 </button>
-
               </Form>
             );
           }}

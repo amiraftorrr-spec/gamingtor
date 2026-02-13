@@ -2,9 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 
-
 export default function TheLastOfUs() {
-    useEffect(() => {
+  useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
@@ -16,27 +15,27 @@ export default function TheLastOfUs() {
         {/* سمت چپ: عکس‌ها */}
         <div className="flex flex-col gap-4 lg:w-1/2">
           <img
-            src="/last1.jpg"
+            src="/last1.webp"
             alt="Last of Us 1"
             className="rounded-lg shadow-lg"
           />
           <img
-            src="/last2.png"
+            src="/last2.webp"
             alt="Last of Us 2"
             className="rounded-lg shadow-lg"
           />
           <img
-            src="/last3.png"
+            src="/last3.webp"
             alt="Last of Us 3"
             className="rounded-lg shadow-lg "
           />
           <img
-            src="/last4.png"
+            src="/last4.webp"
             alt="Last of Us 4"
             className="rounded-lg shadow-lg"
           />
           <img
-            src="/last5.png"
+            src="/last5.webp"
             alt="Last of Us 4"
             className="rounded-lg shadow-lg"
           />
@@ -94,7 +93,8 @@ export default function TheLastOfUs() {
             رساندن این ماده‌ها به حد نصاب آیتم‌هایی مانند کیت سلامت، کوکتل
             مولوتوف، بمب دودزا و… را کرفت کنند. کرفت کردن هر آیتم در ابتدا قفل
             می‌باشد تا زمانی که بازیکن نتواند آن آیتم را در محیط بازی پیدا کند
-            کرفت کردن آن آیتم نیز باز می شود حالا چند عکس از بازی مشاهده می کنید{" "}
+            کرفت کردن آن آیتم نیز باز می شود حالا چند عکس از بازی مشاهده می
+            کنید{" "}
           </p>
 
           <h3 className="text-yellow-400 text-2xl font-semibold">داستان</h3>
@@ -231,9 +231,8 @@ export default function TheLastOfUs() {
               target="_blank"
             >
               <button className="bg-gradient-to-r from-yellow-400 to-red-600 text-black font-bold py-2 px-6 rounded-lg shadow-lg hover:scale-105 transition-transform">
-                  استیم
+                استیم
               </button>
-
             </a>
             <Link to="/">
               <button className="bg-gradient-to-r from-red-600 to-yellow-400 text-black font-bold py-2 px-6 rounded-lg shadow-lg hover:scale-105 transition-transform">

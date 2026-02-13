@@ -19,7 +19,7 @@ export default function AboutUs() {
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (sectionRef.current) observer.observe(sectionRef.current);
@@ -51,20 +51,19 @@ export default function AboutUs() {
         {/* intro */}
         <div className="flex flex-col lg:flex-row items-start gap-12">
           <p className="text-[1.2em] leading-8 text-right flex-1">
-            "گیمینگ تور، خانه‌ای برای گیمرها!"
-            اگر شما هم یکی از عاشقان بازی‌ها هستید، جای درستی اومدید. در گیمینگ تور،
-            دنیای گیمینگ از دیدگاه‌های مختلف بررسی میشه؛ از جدیدترین اخبار صنعت بازی
-            و تحلیل‌های تخصصی تا نقد و بررسی‌های عمیق و تحلیل‌های جزیی.
-            ما به شما کمک می‌کنیم تا همیشه از آخرین روندها و بهترین بازی‌ها باخبر
-            بشید، و البته اینجا جاییه که می‌تونید تجربه‌های هیجان‌انگیز خودتون رو با
-            دیگر گیمرها به اشتراک بذارید.
-            چه شما طرفدار بازی‌های قدیمی باشید، چه علاقه‌مند به بازی‌های مستقل و
-            نوآورانه، ما براتون محتوای جذاب و متنوعی داریم که دنیای بازی‌ها رو برای
-            شما جذاب‌تر از همیشه می‌کنه.
+            "گیمینگ تور، خانه‌ای برای گیمرها!" اگر شما هم یکی از عاشقان بازی‌ها
+            هستید، جای درستی اومدید. در گیمینگ تور، دنیای گیمینگ از دیدگاه‌های
+            مختلف بررسی میشه؛ از جدیدترین اخبار صنعت بازی و تحلیل‌های تخصصی تا
+            نقد و بررسی‌های عمیق و تحلیل‌های جزیی. ما به شما کمک می‌کنیم تا
+            همیشه از آخرین روندها و بهترین بازی‌ها باخبر بشید، و البته اینجا
+            جاییه که می‌تونید تجربه‌های هیجان‌انگیز خودتون رو با دیگر گیمرها به
+            اشتراک بذارید. چه شما طرفدار بازی‌های قدیمی باشید، چه علاقه‌مند به
+            بازی‌های مستقل و نوآورانه، ما براتون محتوای جذاب و متنوعی داریم که
+            دنیای بازی‌ها رو برای شما جذاب‌تر از همیشه می‌کنه.
           </p>
 
           <img
-            src="/astro-Photoroom.png"
+            src="/astro-Photoroom.webp"
             alt=""
             className="w-[300px] lg:w-[350px] object-contain drop-shadow-[0_0_25px_rgba(255,70,85,0.5)]"
           />
@@ -92,9 +91,9 @@ export default function AboutUs() {
           <div className="ml">
             <h3 className="text-[1.8em] text-[#f9ce34] mb-3">ما کی هستیم؟</h3>
             <p className="leading-8">
-              ما یک تیم از عاشقان دنیای بازی هستیم که می‌خوایم تجربه‌ی گیمرها رو به
-              سطح بالاتری ببریم! از جدیدترین بازی‌ها تا مستقل‌های خلاقانه، ما همه رو
-              دنبال می‌کنیم و بهترین تحلیل‌ها و راهنماها رو ارائه می‌دیم.
+              ما یک تیم از عاشقان دنیای بازی هستیم که می‌خوایم تجربه‌ی گیمرها رو
+              به سطح بالاتری ببریم! از جدیدترین بازی‌ها تا مستقل‌های خلاقانه، ما
+              همه رو دنبال می‌کنیم و بهترین تحلیل‌ها و راهنماها رو ارائه می‌دیم.
             </p>
           </div>
 
@@ -107,7 +106,9 @@ export default function AboutUs() {
           </div>
 
           <div>
-            <h3 className="text-[1.8em] text-[#f9ce34] mb-3">چرا ما رو انتخاب کنید؟</h3>
+            <h3 className="text-[1.8em] text-[#f9ce34] mb-3">
+              چرا ما رو انتخاب کنید؟
+            </h3>
             <ul className="space-y-3">
               <li>✅ جدیدترین اخبار و بررسی‌ها</li>
               <li>✅ نقدهای واقعی و بی‌طرفانه</li>
@@ -118,94 +119,93 @@ export default function AboutUs() {
 
           <div>
             <h3 className="text-[1.8em] text-[#f9ce34] mb-3">تماس با ما</h3>
-            <p>📧 ایمیل: <strong>GamingTor@gmail.com</strong></p>
-            <p>📍 آدرس: <strong>قزوین، مینودر، فلکه هما</strong></p>
+            <p>
+              📧 ایمیل: <strong>GamingTor@gmail.com</strong>
+            </p>
+            <p>
+              📍 آدرس: <strong>قزوین، مینودر، فلکه هما</strong>
+            </p>
             <p>📱 ما را در شبکه‌های اجتماعی دنبال کنید!</p>
           </div>
         </div>
 
+        <div
+          className="feedback-section mt-20 text-center relative"
+          style={{ height: "120px", userSelect: "none" }} // غیرقابل انتخاب کردن متن
+        >
+          <h3 className="text-[1.8em] mb-5 text-white">
+            آیا این اطلاعات مفید بود؟
+          </h3>
+          <div
+            className="flex justify-center gap-8 relative h-full items-center"
+            style={{ position: "relative" }}
+            onContextMenu={(e) => e.preventDefault()} // جلوگیری از راست کلیک
+          >
+            <button
+              className="feedback-btn yes-btn"
+              onClick={() => alert("نظر شما ثبت شد!")}
+              draggable={false} // غیرقابل درگ
+            >
+              بله
+            </button>
+            <button
+              className="feedback-btn no-btn"
+              draggable={false} // غیرقابل درگ
+              onClick={() => alert("خاب که چی")}
+              onMouseEnter={(e) => {
+                const btn = e.target;
+                const parent = btn.parentElement;
+                const parentWidth = parent.offsetWidth;
+                const parentHeight = parent.offsetHeight;
+                const btnWidth = btn.offsetWidth;
+                const btnHeight = btn.offsetHeight;
 
+                // موقعیت تصادفی داخل parent
+                const maxX = parentWidth - btnWidth;
+                const maxY = parentHeight - btnHeight;
+                const randomX = Math.floor(Math.random() * maxX);
+                const randomY = Math.floor(Math.random() * maxY);
 
+                btn.style.position = "absolute";
+                btn.style.left = randomX + "px";
+                btn.style.top = randomY + "px";
+              }}
+            >
+              خیر
+            </button>
+          </div>
 
-<div
-  className="feedback-section mt-20 text-center relative"
-  style={{ height: "120px", userSelect: "none" }} // غیرقابل انتخاب کردن متن
->
-  <h3 className="text-[1.8em] mb-5 text-white">آیا این اطلاعات مفید بود؟</h3>
-  <div
-    className="flex justify-center gap-8 relative h-full items-center"
-    style={{ position: "relative" }}
-    onContextMenu={(e) => e.preventDefault()} // جلوگیری از راست کلیک
-  >
-    <button
-      className="feedback-btn yes-btn"
-      onClick={() => alert("نظر شما ثبت شد!")}
-      draggable={false} // غیرقابل درگ
-    >
-      بله
-    </button>
-    <button
-      className="feedback-btn no-btn"
-      draggable={false} // غیرقابل درگ
-         onClick={() => alert("خاب که چی")}
-      onMouseEnter={(e) => {
-        const btn = e.target;
-        const parent = btn.parentElement;
-        const parentWidth = parent.offsetWidth;
-        const parentHeight = parent.offsetHeight;
-        const btnWidth = btn.offsetWidth;
-        const btnHeight = btn.offsetHeight;
+          <style jsx>{`
+            .feedback-btn {
+              padding: 12px 30px;
+              font-size: 1.2em;
+              font-weight: bold;
+              border: none;
+              border-radius: 10px;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              pointer-events: auto;
+            }
 
-        // موقعیت تصادفی داخل parent
-        const maxX = parentWidth - btnWidth;
-        const maxY = parentHeight - btnHeight;
-        const randomX = Math.floor(Math.random() * maxX);
-        const randomY = Math.floor(Math.random() * maxY);
+            .yes-btn {
+              background-color: #28a745;
+              color: white;
+            }
 
-        btn.style.position = "absolute";
-        btn.style.left = randomX + "px";
-        btn.style.top = randomY + "px";
-      }}
-    >
-      خیر
-    </button>
-  </div>
+            .yes-btn:hover {
+              background-color: #1e7e34;
+            }
 
-  <style jsx>{`
-    .feedback-btn {
-      padding: 12px 30px;
-      font-size: 1.2em;
-      font-weight: bold;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      pointer-events: auto;
-    }
+            .no-btn {
+              background-color: #dc3545;
+              color: white;
+            }
 
-    .yes-btn {
-      background-color: #28a745;
-      color: white;
-    }
-
-    .yes-btn:hover {
-      background-color: #1e7e34;
-    }
-
-    .no-btn {
-      background-color: #dc3545;
-      color: white;
-    }
-
-    .no-btn:hover {
-      background-color: #c82333;
-    }
-  `}</style>
-</div>
-
-
-
-
+            .no-btn:hover {
+              background-color: #c82333;
+            }
+          `}</style>
+        </div>
 
         {/* دکمه بازگشت به هوم */}
         <div className="flex justify-center mt-20">
@@ -221,18 +221,38 @@ export default function AboutUs() {
       {/* انیمیشن‌ها فقط ویژگی‌ها */}
       <style jsx>{`
         @keyframes float {
-          0% { transform: translateY(0px); }
-          50% { transform: translateY(-15px); }
-          100% { transform: translateY(0px); }
+          0% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-15px);
+          }
+          100% {
+            transform: translateY(0px);
+          }
         }
         @keyframes rgbLoop {
-          0% { border-color: rgb(255,0,0); }
-          16% { border-color: rgb(255,165,0); }
-          33% { border-color: rgb(255,255,0); }
-          50% { border-color: rgb(0,255,0); }
-          66% { border-color: rgb(0,255,255); }
-          83% { border-color: rgb(0,0,255); }
-          100% { border-color: rgb(255,0,255); }
+          0% {
+            border-color: rgb(255, 0, 0);
+          }
+          16% {
+            border-color: rgb(255, 165, 0);
+          }
+          33% {
+            border-color: rgb(255, 255, 0);
+          }
+          50% {
+            border-color: rgb(0, 255, 0);
+          }
+          66% {
+            border-color: rgb(0, 255, 255);
+          }
+          83% {
+            border-color: rgb(0, 0, 255);
+          }
+          100% {
+            border-color: rgb(255, 0, 255);
+          }
         }
         .animate-float {
           animation-name: float;

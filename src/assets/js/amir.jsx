@@ -33,7 +33,7 @@ export default function Home() {
 
   // -------------------- Dark / Light Mode --------------------
   const [isLight, setIsLight] = useState(
-    localStorage.getItem("theme") === "light"
+    localStorage.getItem("theme") === "light",
   );
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function Home() {
 
   // -------------------- Cart --------------------
   const [cart, setCart] = useState(
-    JSON.parse(localStorage.getItem("cart")) || []
+    JSON.parse(localStorage.getItem("cart")) || [],
   );
   const [cartVisible, setCartVisible] = useState(false);
 
@@ -97,7 +97,7 @@ export default function Home() {
 
   const totalPrice = cart.reduce(
     (sum, item) => sum + parseFloat(item.price.replace("$", "")),
-    0
+    0,
   );
 
   // -------------------- Progress Bar --------------------
@@ -118,19 +118,19 @@ export default function Home() {
     {
       name: "The Last of Us",
       price: "$59.99",
-      img: "./images/the last of us.jpg",
+      img: "./images/the last of us.webp",
       link: "./pages/last of us.html",
     },
     {
       name: "Elden Ring",
       price: "$69.99",
-      img: "./images/elden ring.jpg",
+      img: "./images/elden ring.webp",
       link: "./pages/elden ring.html",
     },
     {
       name: "Cyberpunk 2077",
       price: "$49.99",
-      img: "./images/2077.jpg",
+      img: "./images/2077.webp",
       link: "./pages/2077.html",
     },
   ];
@@ -143,7 +143,7 @@ export default function Home() {
             <a href="#">
               <span className="header_logo">
                 <img
-                  src="./images/i-want-a-logo-that-has-the-text-gaming-tor-and-beh (5).png"
+                  src="./images/i-want-a-logo-that-has-the-text-gaming-tor-and-beh (5).webp"
                   alt=""
                   className="akss"
                 />
@@ -185,10 +185,7 @@ export default function Home() {
         </nav>
         <hr className="hhrr" />
         <div id="progress-container">
-          <div
-            id="progress-bar"
-            style={{ width: `${scrollPercent}%` }}
-          ></div>
+          <div id="progress-bar" style={{ width: `${scrollPercent}%` }}></div>
         </div>
 
         <div className="container" id="home" style={{ marginBottom: "30px" }}>
@@ -208,10 +205,7 @@ export default function Home() {
               <a href={game.link}>
                 <button>بیشتر</button>
               </a>
-              <button
-                className="add-to-cart"
-                onClick={() => addToCart(game)}
-              >
+              <button className="add-to-cart" onClick={() => addToCart(game)}>
                 افزودن
               </button>
             </div>
@@ -239,7 +233,11 @@ export default function Home() {
                 <img
                   src={item.img}
                   alt={item.name}
-                  style={{ width: "90px", height: "50px", borderRadius: "10px" }}
+                  style={{
+                    width: "90px",
+                    height: "50px",
+                    borderRadius: "10px",
+                  }}
                 />
                 <div>
                   <strong>{item.name}</strong>
@@ -258,7 +256,9 @@ export default function Home() {
                 <hr style={{ margin: "10px 0", borderColor: "#999" }} />
                 <strong>جمع کل:</strong>
                 <div style={{ margin: "5px 0" }}>
-                  <span style={{ color: "#00ff7f" }}>${totalPrice.toFixed(2)}</span>
+                  <span style={{ color: "#00ff7f" }}>
+                    ${totalPrice.toFixed(2)}
+                  </span>
                   <br />
                   <span style={{ color: "#ccc" }}>
                     {convertToToman(`$${totalPrice.toFixed(2)}`)}

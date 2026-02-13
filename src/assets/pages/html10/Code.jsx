@@ -75,22 +75,19 @@ export default function CodeVerify() {
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center md:px-20"
-      style={{ backgroundImage: "url('/rzer.png')" }}
+      style={{ backgroundImage: "url('/rzer.webp')" }}
     >
       <div className="w-[460px] bg-black/30 rounded-2xl p-10 text-white backdrop-blur">
-
         <div className="flex justify-center mb-4">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-            <img src="/logo.jpg" className="w-30 rounded-4xl" />
+            <img src="/logo.webp" className="w-30 rounded-4xl" />
           </div>
         </div>
 
         <p className="text-center mb-6 text-white">{renderText()}</p>
 
         <div className="flex items-center justify-between mb-8">
-          <p className="text-sm text-gray-50">
-            کد ارسال‌شده به {phone}
-          </p>
+          <p className="text-sm text-gray-50">کد ارسال‌شده به {phone}</p>
           <Link to={"/Register"}>
             <span className="text-xs text-gray-300 cursor-pointer hover:text-red-500 hover:underline">
               ویرایش شماره
@@ -117,8 +114,8 @@ export default function CodeVerify() {
           disabled={!isValid}
           className={`group relative w-full py-3 rounded-md overflow-hidden transition-all duration-300 ${
             isValid
-              ?  "bg-red-500 text-white transition-all=.4s hover:bg-red-600"
-                      : "bg-gray-400 text-gray-900 cursor-not-allowed"
+              ? "bg-red-500 text-white transition-all=.4s hover:bg-red-600"
+              : "bg-gray-400 text-gray-900 cursor-not-allowed"
           }`}
         >
           <span className="absolute left-4 top-1/2 -translate-y-1/2 opacity-0 -translate-x-3 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
@@ -131,9 +128,7 @@ export default function CodeVerify() {
 
         <div className="text-center mt-6 text-sm">
           {timer > 0 ? (
-            <span className="text-gray-300">
-              ارسال مجدد تا {timer} ثانیه
-            </span>
+            <span className="text-gray-300">ارسال مجدد تا {timer} ثانیه</span>
           ) : (
             <button
               onClick={resendHandler}

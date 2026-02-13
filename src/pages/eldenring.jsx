@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";  
-  export default function TheLastOfUs() {
-      useEffect(() => {
-      window.scrollTo({ top: 0, behavior: "auto" });
-    }, []);
-  
+import { useEffect } from "react";
+export default function TheLastOfUs() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#040410] text-white p-8 rtl">
       <h2 className="text-4xl font-bold text-center mb-8">The Last of Us</h2>
@@ -14,23 +14,23 @@ import { useEffect } from "react";
         {/* سمت چپ: عکس‌ها */}
         <div className="flex flex-col gap-4 lg:w-1/2">
           <img
-            src="/elden pic1.jpg"
+            src="/elden pic1.webp"
             alt="Last of Us 2"
             className="rounded-lg shadow-lg"
           />
 
           <img
-            src="/elden pic.jpg"
+            src="/elden pic.webp"
             alt="Last of Us 1"
             className="rounded-lg shadow-lg"
           />
           <img
-            src="/elden pic2.jpg"
+            src="/elden pic2.webp"
             alt="Last of Us 3"
             className="rounded-lg shadow-lg "
           />
           <img
-            src="/elden pic3..jpg"
+            src="/elden pic3..webp"
             alt="Last of Us 4"
             className="rounded-lg shadow-lg"
           />

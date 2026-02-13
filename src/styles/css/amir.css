@@ -1,17 +1,16 @@
 @font-face {
-  font-family: 'shab';
-  src: url('../fonts/Shabnam.ttf') format('truetype');
+  font-family: "shab";
+  src: url("../fonts/Shabnam.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'bol';
-  src: url('../fonts/Raleway-Medium.ttf') format('truetype');
+  font-family: "bol";
+  src: url("../fonts/Raleway-Medium.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
-
 
 @font-face {
   font-family: shab;
@@ -23,24 +22,19 @@
   src: url(/src/assets/fonts/Raleway-Medium.ttf);
 }
 /* __________باگو پیدا کردم_________ */
-html, body {
+html,
+body {
   overflow-x: hidden;
 }
 
-
 /* __________باگو پیدا کردم_________ */
 
-
-body::selection{
-  
-  background-color:  #FF4655; 
-  color: white;         /* برای خوانایی بهتر */
-
-
+body::selection {
+  background-color: #ff4655;
+  color: white; /* برای خوانایی بهتر */
 }
 
-
-.star{
+.star {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
@@ -51,39 +45,29 @@ body {
   font-family: shab;
 }
 
-
-
-
 #progress-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px; 
-    z-index: 1000; 
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  z-index: 1000;
+}
 
-  #progress-bar {
-    height: 100%;
-    background-color: #f62133; 
-    width: 0%;
-  }
-
+#progress-bar {
+  height: 100%;
+  background-color: #f62133;
+  width: 0%;
+}
 
 /* ____________________navbar start________________________ */
 
-
-
-
 header {
-  background-image: url('592d2a1c-82ee-4698-9072-9d91d5cfdab4.jpg');
+  background-image: url("592d2a1c-82ee-4698-9072-9d91d5cfdab4.webp");
   min-height: 100vh;
   background-repeat: no-repeat;
   background-size: cover;
 }
-
-
-
 
 header nav ul {
   display: flex;
@@ -93,14 +77,10 @@ header nav ul {
   gap: 115px;
 }
 
-
-
 header a {
   color: aliceblue;
   text-decoration: none;
 }
-
-
 
 header nav ul li a {
   text-transform: uppercase;
@@ -108,38 +88,34 @@ header nav ul li a {
 }
 
 header nav ul li a:hover {
-  color: #FF4655;
+  color: #ff4655;
   border-radius: 8px;
 }
 
-
-
 header nav {
-  position: fixed;   
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 80px; 
-  background: rgba(0, 0, 0, 0.7); 
-  backdrop-filter: blur(10px); 
+  height: 80px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
   display: flex;
   justify-content: space-evenly;
   align-items: center;
   padding: 0 15px;
-  z-index: 1000; 
+  z-index: 1000;
 }
 
 header {
-  padding-top: 80px; 
+  padding-top: 80px;
 }
-
 
 .hhrr {
-  color: #FF4655;
-  background-color: #FF4655;
-  border: solid #FF4655;
+  color: #ff4655;
+  background-color: #ff4655;
+  border: solid #ff4655;
 }
-
 
 .akss {
   width: 180px;
@@ -149,9 +125,6 @@ header {
 .aks-div {
   width: 30%;
 }
-
-
-
 
 /* _____________________________button___________________________ */
 .primary-button {
@@ -164,7 +137,7 @@ header {
   border: 1px solid #232a30;
   padding: 0.8rem 2.1rem;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 531.28 200'%3E%3Cdefs%3E%3Cstyle%3E .shape %7B fill: %23FF4655 /* fill: %230E1822; */ %7D %3C/style%3E%3C/defs%3E%3Cg id='Layer_2' data-name='Layer 2'%3E%3Cg id='Layer_1-2' data-name='Layer 1'%3E%3Cpolygon class='shape' points='415.81 200 0 200 115.47 0 531.28 0 415.81 200' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
-  background-color: #0E1822;
+  background-color: #0e1822;
   background-size: 200%;
   background-position: 200%;
   background-repeat: no-repeat;
@@ -180,7 +153,7 @@ header {
 }
 
 .primary-button:hover {
-  border: 1px solid #FF4655;
+  border: 1px solid #ff4655;
   color: white;
   background-position: 40%;
 }
@@ -188,7 +161,7 @@ header {
 .primary-button:before {
   content: "";
   position: absolute;
-  background-color: #0E1822;
+  background-color: #0e1822;
   width: 0.2rem;
   height: 0.2rem;
   top: -1px;
@@ -207,7 +180,7 @@ header {
 .primary-button:after {
   content: "";
   position: absolute;
-  background-color: #FF4655;
+  background-color: #ff4655;
   width: 0.3rem;
   height: 0.3rem;
   bottom: -1px;
@@ -228,7 +201,7 @@ header {
   height: 50%;
   left: -0.3em;
   top: -0.3em;
-  border: 1px solid #0E1822;
+  border: 1px solid #0e1822;
   border-bottom: 0px;
 }
 
@@ -239,7 +212,7 @@ header {
   height: 50%;
   left: -0.3em;
   bottom: -0.3em;
-  border: 1px solid #0E1822;
+  border: 1px solid #0e1822;
   border-top: 0px;
   z-index: 0;
 }
@@ -248,10 +221,8 @@ header {
   fill: #177fe7;
 }
 
-
 /* _____________________button end_____________________ */
 /* _____________________________________________navbar end______________________________ */
-
 
 .container {
   text-align: right;
@@ -265,9 +236,8 @@ header {
   font-size: 2.5rem;
   margin-bottom: 20px;
   margin-right: 49rem;
-    font-family: shab;
-    font-weight: bold;
-
+  font-family: shab;
+  font-weight: bold;
 }
 /* انیمیشن ورود */
 @keyframes fadeSlideUp {
@@ -285,7 +255,6 @@ header {
   animation: fadeSlideUp 1s ease-out forwards;
 }
 
-
 .welcome-typing {
   text-align: center;
   font-size: 16px;
@@ -295,12 +264,12 @@ header {
   color: #222;
   transition: color 0.5s;
 }
-.container .btt{
-    margin-right: 49rem;
-    margin-top: 2rem;
+.container .btt {
+  margin-right: 49rem;
+  margin-top: 2rem;
 }
 
-.contactpage h2{
+.contactpage h2 {
   font-size: x-large;
 }
 
@@ -319,7 +288,9 @@ header {
   border: 2px solid white;
   border-radius: 5px;
   text-decoration: none;
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
   margin-right: 0px;
 }
 
@@ -332,11 +303,10 @@ header {
   cursor: pointer;
   user-select: none;
   overflow: hidden;
-  color: #FF4655;
+  color: #ff4655;
   z-index: 1;
   font-family: inherit;
   font-weight: 500;
-  
 }
 
 .btt span {
@@ -347,7 +317,7 @@ header {
   height: 100%;
   background: transparent;
   z-index: -1;
-  border: 1.5px solid #FF4655;
+  border: 1.5px solid #ff4655;
 }
 
 .btt span::before {
@@ -366,7 +336,7 @@ header {
 .btt:hover span::before {
   transform: translate(-50%, -50%) rotate(-90deg);
   width: 100%;
-  background: #FF4655;
+  background: #ff4655;
 }
 
 .btt:hover {
@@ -377,10 +347,7 @@ header {
   background: #d12e3b;
 }
 
-
-
 /* ______________front page end___________ */
-
 
 /* _________main start________ */
 
@@ -390,8 +357,6 @@ main {
   background-color: #040410;
   font-family: shab;
 }
-
-
 
 .about {
   position: relative;
@@ -409,11 +374,9 @@ main {
   display: flex;
 }
 
-
 .contentbx {
   text-align: right;
 }
-
 
 .contentbx h2 {
   color: whitesmoke;
@@ -421,14 +384,9 @@ main {
   font-weight: 700;
 }
 
-
-
 .contentbx p {
   color: rgb(194, 117, 117);
 }
-
-
-
 
 /* _____about us end_____ */
 
@@ -439,11 +397,33 @@ main {
   height: 100%;
   --color: rgba(114, 114, 114, 0.3);
   background-color: #040410;
-  background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent),
-      linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent);
+  background-image:
+    linear-gradient(
+      0deg,
+      transparent 24%,
+      var(--color) 25%,
+      var(--color) 26%,
+      transparent 27%,
+      transparent 74%,
+      var(--color) 75%,
+      var(--color) 76%,
+      transparent 77%,
+      transparent
+    ),
+    linear-gradient(
+      90deg,
+      transparent 24%,
+      var(--color) 25%,
+      var(--color) 26%,
+      transparent 27%,
+      transparent 74%,
+      var(--color) 75%,
+      var(--color) 76%,
+      transparent 77%,
+      transparent
+    );
   background-size: 55px 55px;
 }
-
 
 .titr {
   text-align: center;
@@ -463,12 +443,16 @@ main {
   animation: fadeSlide 0.4s ease forwards;
 }
 
-
-
 /* ورود کارت ها */
 @keyframes card-fade-in {
-  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .custom-card.fade-slide {
@@ -479,23 +463,42 @@ main {
   animation: card-fade-in 0.5s ease forwards;
 }
 
-
-
-.custom-card.fade-slide:nth-child(1) { animation-delay: 0.05s; }
-.custom-card.fade-slide:nth-child(2) { animation-delay: 0.1s; }
-.custom-card.fade-slide:nth-child(3) { animation-delay: 0.15s; }
-.custom-card.fade-slide:nth-child(4) { animation-delay: 0.2s; }
-.custom-card.fade-slide:nth-child(5) { animation-delay: 0.25s; }
-.custom-card.fade-slide:nth-child(6) { animation-delay: 0.3s; }
-.custom-card.fade-slide:nth-child(7) { animation-delay: 0.35s; }
-.custom-card.fade-slide:nth-child(8) { animation-delay: 0.4s; }
-.custom-card.fade-slide:nth-child(9) { animation-delay: 0.45s; }
-.custom-card.fade-slide:nth-child(10) { animation-delay: 0.5s; }
-.custom-card.fade-slide:nth-child(11) { animation-delay: 0.55s; }
-.custom-card.fade-slide:nth-child(12) { animation-delay: 0.6s; }
-
-
-
+.custom-card.fade-slide:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.custom-card.fade-slide:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.custom-card.fade-slide:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.custom-card.fade-slide:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.custom-card.fade-slide:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.custom-card.fade-slide:nth-child(6) {
+  animation-delay: 0.3s;
+}
+.custom-card.fade-slide:nth-child(7) {
+  animation-delay: 0.35s;
+}
+.custom-card.fade-slide:nth-child(8) {
+  animation-delay: 0.4s;
+}
+.custom-card.fade-slide:nth-child(9) {
+  animation-delay: 0.45s;
+}
+.custom-card.fade-slide:nth-child(10) {
+  animation-delay: 0.5s;
+}
+.custom-card.fade-slide:nth-child(11) {
+  animation-delay: 0.55s;
+}
+.custom-card.fade-slide:nth-child(12) {
+  animation-delay: 0.6s;
+}
 
 .custom-cards-container {
   display: grid;
@@ -510,7 +513,7 @@ main {
   justify-content: center;
   gap: 40px;
 }
-.containerrr button{
+.containerrr button {
   gap: 5rem;
 }
 
@@ -566,16 +569,12 @@ main {
 }
 
 .custom-button-unique-123:hover {
-  background-color: #FF4655;
+  background-color: #ff4655;
   transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-
-
-
 /* ________________________cart end___________________ */
-
 
 /* _______________contact us__________ */
 
@@ -589,18 +588,18 @@ main {
   font-family: shab;
 }
 
-
-.contact-h2{
+.contact-h2 {
   text-align: right;
 }
 
-.cp{
+.cp {
   width: 40rem;
   height: 39rem;
   border-radius: 8px;
 }
 
-.contact-content{  display: flex;
+.contact-content {
+  display: flex;
   background: #12172b;
   padding: 20px;
   border-radius: 10px;
@@ -608,9 +607,9 @@ main {
   height: 650px;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
-.contact-img{
+.contact-img {
   flex: 1;
-  background: url('../images/contact\ us.webp') no-repeat center center;
+  background: url("../images/contact\ us.webp") no-repeat center center;
   background-size: cover;
   border-radius: 10px;
 }
@@ -637,7 +636,8 @@ main {
 
 /* انیمیشن اینپوت ها */
 
-.input-container input, .input-container textarea {
+.input-container input,
+.input-container textarea {
   width: 100%;
   padding: 10px;
   border: none;
@@ -667,68 +667,58 @@ main {
   font-size: 16px;
   cursor: pointer;
   font-family: shab;
-  transition: .3s;
+  transition: 0.3s;
 }
 .contact-form-container-unique button:hover {
   background: #ff0055;
 }
 
-
 /* ____________contact us end____________________ */
 
-
-
-
-
 /* ___________________footer ____________________ */
-footer{
+footer {
   background-color: #1d1d29;
   font-size: 16px;
   padding-top: 50px;
-color: white;
+  color: white;
 }
-.ftmaster{
+.ftmaster {
   width: 1140px;
   margin: auto;
   display: flex;
   justify-content: center;
   gap: 90px;
 }
-.ftcontent{
+.ftcontent {
   width: 33.3%;
   color: white;
-  
 }
-footer h3{
+footer h3 {
   font-size: 28px;
   margin-bottom: 15px;
   text-align: center;
-
 }
-.icons{
+.icons {
   text-align: center;
   padding: 0;
   font-size: 28px;
 }
 
-
-
-.icons li{
+.icons li {
   display: inline-block;
   text-align: center;
   padding: 5px;
 }
 
-.icons .yt{
+.icons .yt {
   text-decoration: none;
-color: rgb(223, 46, 46);
-transition: .2s;
+  color: rgb(223, 46, 46);
+  transition: 0.2s;
 }
 
-.icons .yt:hover{
+.icons .yt:hover {
   color: rgb(255, 0, 0);
 }
-
 
 .icons .in {
   background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
@@ -737,45 +727,39 @@ transition: .2s;
   transition: 0.3s ease;
 }
 
-
-
-.icons .tw{
+.icons .tw {
   text-decoration: none;
-color: rgb(46, 117, 223);
-transition: .2s;
+  color: rgb(46, 117, 223);
+  transition: 0.2s;
 }
 
-.icons .tw:hover{
-  color: rgb(6, 103, 249)
+.icons .tw:hover {
+  color: rgb(6, 103, 249);
 }
 
-
-.icons .fa{
+.icons .fa {
   text-decoration: none;
-color: rgb(83, 137, 218);
-transition: .2s;
+  color: rgb(83, 137, 218);
+  transition: 0.2s;
 }
 
-.icons .fa:hover{
-  color: rgb(25, 112, 242)
+.icons .fa:hover {
+  color: rgb(25, 112, 242);
 }
 
-
-
-
-.ftcontent p{
+.ftcontent p {
   width: 190px;
   margin: auto;
   padding: 7px;
 }
 
-.ftcontent ul{
+.ftcontent ul {
   text-align: center;
 }
-.fast{
+.fast {
   padding: 0;
 }
-.fast li{
+.fast li {
   width: auto;
   text-align: center;
   list-style-type: none;
@@ -783,56 +767,44 @@ transition: .2s;
   padding: 7px;
   position: relative;
 }
-.fast a{
+.fast a {
   list-style-type: none;
   text-decoration: none;
   color: white;
 }
 
-.fast li::before{
-  content: '';
+.fast li::before {
+  content: "";
   position: absolute;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   left: 50%;
   top: 100%;
   width: 0;
   height: 2px;
   background: #ff0055;
-  transition-duration: .5s;
+  transition-duration: 0.5s;
 }
-.fast li:hover::before{
+.fast li:hover::before {
   width: 70px;
 }
 
-.copyri{
+.copyri {
   background: #bea3a3;
   text-align: center;
   padding: 10px 0;
   margin-top: 50px;
 }
-.copyri p{
+.copyri p {
   color: #343434;
   margin: 0;
   font-size: 16px;
   padding: 7px;
 }
 
-.lltt{
+.lltt {
   color: white;
   direction: rtl;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 #scrollBtn {
   position: fixed;
@@ -847,14 +819,15 @@ transition: .2s;
   padding: 15px 20px;
   border-radius: 50px;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  transition: all .4s;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+  transition: all 0.4s;
 }
 
 #scrollBtn.show {
@@ -867,8 +840,6 @@ transition: .2s;
   background-color: #f74958;
 }
 /* ________________________ریسپانسیو تایم_____________________ */
-
-
 
 /* ==================== ریسپانسیو عمومی ==================== */
 @media (max-width: 1200px) {
@@ -1065,11 +1036,9 @@ transition: .2s;
 /* ==================== هامبورگر منو JS Trigger ==================== */
 /* اضافه کردن کلاس show به منو برای باز شدن */
 
-
-
 body.light-mode {
-    background-color: #f2f7ff;
-    color: #000;
+  background-color: #f2f7ff;
+  color: #000;
 }
 
 body.light-mode header,
@@ -1077,7 +1046,7 @@ body.light-mode main,
 body.light-mode footer,
 body.light-mode .contactpage,
 body.light-mode .containerrr {
-    background-color: #e6f0ff;
+  background-color: #e6f0ff;
 }
 
 body.light-mode h1,
@@ -1085,35 +1054,34 @@ body.light-mode h2,
 body.light-mode p,
 body.light-mode .titr,
 body.light-mode .contentbx h2 {
-    color: #003366;
+  color: #003366;
 }
 
 body.light-mode .btt,
 body.light-mode .primary-button,
 body.light-mode .custom-button-unique-123,
 body.light-mode .contact-btn {
-    background-color: #007bff;
-    color: white;
-    border-color: #0056b3;
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
 }
 
 body.light-mode .btt:hover,
 body.light-mode .primary-button:hover,
 body.light-mode .custom-button-unique-123:hover,
 body.light-mode .contact-btn:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 body.light-mode nav {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
 }
 
 body.light-mode a {
-    color: #003366;
+  color: #003366;
 }
 /* ++++++++++++++++++++++++++++++++++++ */
-
 
 body.light-mode {
   background-color: #f2f7ff;
@@ -1150,7 +1118,7 @@ body.light-mode nav {
 }
 
 body.light-mode .primary-button:after {
-  background-color: #007bff; 
+  background-color: #007bff;
 }
 
 body.light-mode .primary-button:before {
@@ -1182,7 +1150,6 @@ body.light-mode #scrollBtn:hover {
   background-color: #0056b3;
 }
 
-
 body.light-mode .contact-content {
   background: white;
   color: #000;
@@ -1197,7 +1164,7 @@ body.light-mode footer h3 {
   color: #007bff;
 }
 body.light-mode .copyri {
-  background: #d0e7ff; 
+  background: #d0e7ff;
 }
 
 body.light-mode .copyri p {
@@ -1219,22 +1186,18 @@ body.light-mode .btt {
   z-index: 1;
 }
 
-
 body.light-mode .btt span {
   border: 1.5px solid #007bff;
 }
-
 
 body.light-mode .btt span::before {
   background: #007bff;
   z-index: -1;
 }
 
-
 body.light-mode .btt:hover {
   color: rgb(171, 226, 248);
 }
-
 
 body.light-mode .btt:active span::before {
   background: #0056b3;
@@ -1243,16 +1206,15 @@ body.light-mode #progress-bar {
   background-color: #007bff;
 }
 body.light-mode header {
-  background: url('ChatGPT\ Image\ Jun\ 27\,\ 2025\,\ 12_43_53\ AM.png') no-repeat right center;
+  background: url("ChatGPT\ Image\ Jun\ 27\,\ 2025\,\ 12_43_53\ AM.webp")
+    no-repeat right center;
   background-size: cover;
   background-position: center;
 }
 body.light-mode ::selection {
-  background-color: #007bff; 
+  background-color: #007bff;
   color: white;
 }
-
-
 
 .contact-img img {
   content: url("contact us.webp");
@@ -1260,7 +1222,7 @@ body.light-mode ::selection {
 
 /* لایت مود – فقط عکس عوض میشه */
 .light-mode .contact-img img {
-  content: url("contact us 2.png");
+  content: url("contact us 2.webp");
   width: 1000px;
 }
 
@@ -1268,9 +1230,11 @@ body,
 header,
 main,
 footer {
-  transition: background-color 0.6s ease, background-image 1s ease, color 0.6s ease;
+  transition:
+    background-color 0.6s ease,
+    background-image 1s ease,
+    color 0.6s ease;
 }
-
 
 .container,
 .about,
@@ -1283,47 +1247,27 @@ button,
   transition: all 0.5s ease;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .theme-toggle-button i {
-  color: #c0c0c0; 
+  color: #c0c0c0;
   transition: color 0.3s ease;
 }
 
-
 body.light-mode .theme-toggle-button i {
-  color: #facc15; 
+  color: #facc15;
 }
-
-
-
 
 .theme-toggle-button {
   background: transparent;
   border: none;
   cursor: pointer;
   font-size: 24px;
-  color: #FF4655;
+  color: #ff4655;
   transition: color 0.3s ease;
 }
 
 body.light-mode .theme-toggle-button {
   color: #007bff;
 }
-
 
 /* 🎨 Light mode style for cart panel */
 body.light-mode #cart-panel {
@@ -1367,8 +1311,6 @@ body.light-mode #clear-cart-btn:hover {
   background-color: #cc0000;
 }
 
-
-
 /* _______________________________basket style_________________ */
 #cart-icon-container {
   position: relative;
@@ -1381,14 +1323,12 @@ body.light-mode #clear-cart-btn:hover {
   position: absolute;
   top: -8px;
   right: -12px;
-  background-color: #FF4655;
+  background-color: #ff4655;
   color: white;
   font-size: 12px;
   padding: 2px 6px;
   border-radius: 50%;
 }
-
-
 
 /* CSS (amir.css) */
 #scrollBtn {
@@ -1424,7 +1364,6 @@ body.light-mode #clear-cart-btn:hover {
   z-index: 9998;
 }
 
-
 #cart-panel {
   position: fixed;
   top: 80px;
@@ -1436,7 +1375,7 @@ body.light-mode #clear-cart-btn:hover {
   color: white;
   padding: 20px;
   z-index: 1001;
-  border-right: 2px solid #FF4655;
+  border-right: 2px solid #ff4655;
   transition: transform 0.3s ease;
   transform: translateX(-100%);
 }
@@ -1450,15 +1389,15 @@ body.light-mode #clear-cart-btn:hover {
   justify-content: space-between;
   align-items: center;
 }
-.cpan{
+.cpan {
   background-color: #f74958;
   color: #ffffff;
   border-radius: 5px;
   width: 5rem;
   height: 2rem;
-  transition: all .3s;
+  transition: all 0.3s;
 }
-.cpan:hover{
+.cpan:hover {
   background-color: #ff0055;
 }
 
@@ -1471,9 +1410,7 @@ body.light-mode #clear-cart-btn:hover {
 }
 /* ___________________________________________________ */
 
-
 /* _________________wellcome________________ */
-
 
 body.light-mode .welcome-typing {
   color: #007bff; /* لایت مود آبی تیره */
@@ -1482,12 +1419,6 @@ body.light-mode .welcome-typing {
 body:not(.light-mode) .welcome-typing {
   color: rgb(194, 117, 117); /* دارک مود */
 }
-
-
-
-
-
-
 
 /* Container for the switch */
 .theme-switch-container {
@@ -1519,13 +1450,14 @@ body:not(.light-mode) .welcome-typing {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #222; 
+  background-color: #222;
   border-radius: 1em;
   transition: 0.4s;
 }
 
 /* Icons */
-.off, .on {
+.off,
+.on {
   position: absolute;
   width: 2em;
   height: 2em;
@@ -1538,8 +1470,13 @@ body:not(.light-mode) .welcome-typing {
   pointer-events: none;
 }
 
-.off { left: 0; }  
-.on { left: 0; opacity: 0; } 
+.off {
+  left: 0;
+}
+.on {
+  left: 0;
+  opacity: 0;
+}
 
 .switch input:checked ~ .off {
   transform: translateX(2em);
@@ -1558,11 +1495,9 @@ body.dark-mode .slider {
   background-color: #222222;
 }
 
-
-
 .light-btn {
-  background-color: #007bff; 
-  color: #000; 
+  background-color: #007bff;
+  color: #000;
   border: 2px solid #1c7ce3;
   transition: 0.3s;
 }
@@ -1573,8 +1508,8 @@ body.dark-mode .slider {
 }
 
 .dark-btn {
-  background-color: #d00000; 
-  color: #fff; 
+  background-color: #d00000;
+  color: #fff;
   border: 2px solid #bd3434;
   transition: 0.3s;
 }
@@ -1584,14 +1519,7 @@ body.dark-mode .slider {
   color: #fff;
 }
 
-
-
-
-
-
-
 /* _______________________server start__________________________ */
-
 
 /* ================= WRAPPER ================= */
 .gameup-wrapper {
@@ -1602,7 +1530,7 @@ body.dark-mode .slider {
 /* ================= BACKGROUND ================= */
 .gameup-bg {
   position: relative;
-  background: url("/server1.png") center / 96% no-repeat;
+  background: url("/server1.webp") center / 96% no-repeat;
   border-radius: 22px;
   overflow: hidden;
 }
@@ -1778,92 +1706,77 @@ body.dark-mode .slider {
   transform: translateX(110px); /* 230 - 120 */
 }
 
-
-
 /* ===================== Gameup Light Mode ===================== */
 body.light-mode .gameup-wrapper {
-    background: #e6f0ff; /* پس زمینه روشن */
+  background: #e6f0ff; /* پس زمینه روشن */
 }
 
 body.light-mode .gameup-bg {
-    background: url("/server1.png") center / 96% no-repeat;
-    border-radius: 22px;
+  background: url("/server1.webp") center / 96% no-repeat;
+  border-radius: 22px;
 }
 
 body.light-mode .bg-overlay {
-    backdrop-filter: blur(6px);
-    background: rgba(230, 240, 255, 0.6); /* شفاف روشن */
+  backdrop-filter: blur(6px);
+  background: rgba(230, 240, 255, 0.6); /* شفاف روشن */
 }
 
-
-
-
 body.light-mode .gameup-inner {
-    color: #003366; /* متن‌ها تیره روی پس‌زمینه روشن */
+  color: #003366; /* متن‌ها تیره روی پس‌زمینه روشن */
 }
 
 body.light-mode .gameup-text h2 {
-    color: #003366;
+  color: #003366;
 }
 
 body.light-mode .gameup-text p {
-    color: #0056b3; /* متن توضیحی */
+  color: #0056b3; /* متن توضیحی */
 }
 
 body.light-mode .gameup-text span {
-    color: #3b86ff; /* هایلایت قرمز */
+  color: #3b86ff; /* هایلایت قرمز */
 }
 
 body.light-mode .gameup-btn {
-    background: linear-gradient(to right, #007bff, #0056b3);
-    color: white;
+  background: linear-gradient(to right, #007bff, #0056b3);
+  color: white;
 }
 
 body.light-mode .gameup-btn:hover {
-    transform: translateY(-3px);
+  transform: translateY(-3px);
 }
 
 /* کارت‌ها */
 body.light-mode .gameup-cards .card {
-    background-color: rgba(230, 240, 255, 0.25);
-    border: 1px solid rgba(0, 86, 179, 0.2);
+  background-color: rgba(230, 240, 255, 0.25);
+  border: 1px solid rgba(0, 86, 179, 0.2);
 }
 
 body.light-mode .gameup-cards .card::before {
-    background: linear-gradient(
-        to bottom,
-        rgba(71, 109, 168, 0.2),
-        rgba(0, 123, 255, 0.3)
-    );
+  background: linear-gradient(
+    to bottom,
+    rgba(71, 109, 168, 0.2),
+    rgba(0, 123, 255, 0.3)
+  );
 }
 
 body.light-mode .gameup-cards .card img {
-    filter: grayscale(10); /* تصاویر رنگی */
+  filter: grayscale(10); /* تصاویر رنگی */
 }
 
 /* Hover کارت‌ها */
 body.light-mode .gameup-cards .card:hover::before {
-    opacity: 0;
+  opacity: 0;
 }
 body.light-mode .gameup-cards .card:hover img {
-    filter: none;
+  filter: none;
 }
 
 /* =================== Scroll / Overlay Fix =================== */
 body.light-mode .gameup-wrapper:hover ~ body * {
-    filter: blur(2px);
-    pointer-events: auto; /* اسکرول و دکمه‌ها همچنان فعال */
+  filter: blur(2px);
+  pointer-events: auto; /* اسکرول و دکمه‌ها همچنان فعال */
 }
-
-
-
-
-
-
-
-
-
-
 
 #scrollBtn {
   position: fixed;
@@ -1883,7 +1796,7 @@ body.light-mode .gameup-wrapper:hover ~ body * {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   animation: gradientBG 3s ease infinite;
   transition: all 0.3s ease;
 }
@@ -1893,7 +1806,13 @@ body.light-mode .gameup-wrapper:hover ~ body * {
 }
 
 @keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

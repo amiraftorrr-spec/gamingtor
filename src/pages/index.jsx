@@ -6,7 +6,7 @@ import ScrollAnimations from "./ScrollAnimations";
 
 export default function Index() {
   const [usdRate, setUsdRate] = useState(null);
-  const [countdown, setCountdown] = useState(null);   
+  const [countdown, setCountdown] = useState(null);
 
   // -------------------- Welcome typing --------------------
   const welcomeMsg =
@@ -54,7 +54,7 @@ export default function Index() {
   // ___________api__________________
 
   useEffect(() => {
-    let interval; 
+    let interval;
     const fetchUsdRate = async () => {
       try {
         const cached = JSON.parse(localStorage.getItem("navasan_usd"));
@@ -64,7 +64,7 @@ export default function Index() {
 
         if (cached && now - cached.timestamp < TWELVE_HOURS) {
           setUsdRate(cached.rate);
-          expiry = cached.timestamp + TWELVE_HOURS; 
+          expiry = cached.timestamp + TWELVE_HOURS;
         } else {
           const res = await fetch(
             "https://api.navasan.tech/latest/?api_key=free6Yks7pS1SkOrIHPzUX76dXDovqiL",
@@ -185,84 +185,84 @@ export default function Index() {
     {
       name: "The Last of Us",
       price: "$59.99",
-      img: "the last of us.jpg",
+      img: "the last of us.webp",
       link: "/games/last-of-us",
       desc: "یک داستان احساسی در دنیای آخرالزمانی",
     },
     {
       name: "Elden Ring",
       price: "$69.99",
-      img: "elden ring.jpg",
+      img: "elden ring.webp",
       link: "/games/elden-ring",
       desc: "یک حماسه فانتزی تاریک پر از ماجراجویی",
     },
     {
       name: "Cyberpunk 2077",
       price: "$49.99",
-      img: "2077.jpg",
+      img: "2077.webp",
       link: "/games/cyberpunk-2077",
       desc: "ورود به دنیایی آینده‌نگر و نقش‌آفرینی",
     },
     {
       name: "God of War: Ragnarok",
       price: "$59.99",
-      img: "god of war.jpg",
+      img: "god of war.webp",
       link: "/games/god-of-war",
       desc: "تجربه‌ای حماسی از اساطیر نورس",
     },
     {
       name: "Grand Theft Auto V",
       price: "$29.99",
-      img: "gtav.jpg",
+      img: "gtav.webp",
       link: "/games/gta-v",
       desc: "زندگی جرم و جنایت در یک دنیای باز",
     },
     {
       name: "Red Dead Redemption",
       price: "$39.99",
-      img: "red dead.jpg",
+      img: "red dead.webp",
       link: "/games/red-dead",
       desc: "وسترن حماسی",
     },
     {
       name: "Hogwarts Legacy",
       price: "$59.99",
-      img: "hogwarts.avif",
+      img: "hogwarts.webp",
       link: "#",
       desc: "دنیای جادوگری",
     },
     {
       name: "Resident Evil 4",
       price: "$49.99",
-      img: "re4.jpg",
+      img: "re4.webp",
       link: "#",
       desc: "ترس و بقا",
     },
     {
       name: "Sekiro",
       price: "$44.99",
-      img: "sekiro.jpg",
+      img: "sekiro.webp",
       link: "#",
       desc: "چالش سامورایی",
     },
     {
       name: "Assassin's Creed",
       price: "$39.99",
-      img: "ass.jpg",
+      img: "ass.webp",
       link: "#",
       desc: "تاریخ مخفی",
     },
     {
       name: "Far Cry 3",
       price: "$34.99",
-      img: "far3.jpg",
+      img: "far3.webp",
       link: "#",
       desc: "اکشن جهان‌باز",
     },
     {
       name: "Mortal Kombat",
       price: "$29.99",
-      img: "mortal.jpg",
+      img: "mortal.webp",
       link: "#",
       desc: "مبارزه کلاسیک",
     },
@@ -271,48 +271,47 @@ export default function Index() {
     {
       name: "Detroit: Become Human",
       price: "$39.99",
-      img: "detroid.jpg",
+      img: "detroid.webp",
       link: "#",
       desc: "یک داستان تعاملی با انتخاب‌های متعدد   ",
     },
     {
       name: "Little Nightmares 2",
       price: "$34.99",
-      img: "litlle.jpg",
+      img: "litlle.webp",
       link: "#",
       desc: "ترسناک و معمایی، دنیای تاریک و رازآلود",
     },
     {
       name: "Dark Souls 3",
       price: "$49.99",
-      img: "dark.jpg",
+      img: "dark.webp",
       link: "#",
       desc: "چالش حماسی و مبارزه سخت    ",
     },
     {
       name: "Forza Horizon 5",
       price: "$59.99",
-      img: "for.avif",
+      img: "for.webp",
       link: "#",
       desc: "تجربه رانندگی آزاد و مسابقات هیجان‌انگیز",
     },
     {
       name: "Days Gone",
       price: "$44.99",
-      img: "days.jpg",
+      img: "days.webp",
       link: "#",
       desc: "پارکور و زامبی‌ها، بقا در دنیایی آخرالزمانی",
     },
     {
       name: "Stray",
       price: "$29.99",
-      img: "stray.jpg",
+      img: "stray.webp",
       link: "#",
       desc: "یک تجربه اکشن و مهیج با داستان جذاب",
     },
   ];
 
-  
   const STEP = 3;
   const [visibleCount, setVisibleCount] = useState(6);
 
@@ -337,13 +336,13 @@ export default function Index() {
         top: -520,
         behavior: "smooth",
       });
-    }, 600);     
+    }, 600);
   };
 
   const servers = [
     {
       id: 1,
-      img: "/images/server1.jpg",
+      img: "/images/server1.webp",
       title: "گیم سرور های گیم آپ",
       desc: "توی گیم سرور های گیم‌آپ میتونید بازی های مختلف رو با دوستاتون آنلاین بازی کنید.",
     },
@@ -363,7 +362,7 @@ export default function Index() {
               <a href="#">
                 <span className="header_logo">
                   <img
-                    src="i-want-a-logo-that-has-the-text-gaming-tor-and-beh (5).png"
+                    src="i-want-a-logo-that-has-the-text-gaming-tor-and-beh (5).webp"
                     alt=""
                     className="akss"
                   />
@@ -453,7 +452,7 @@ export default function Index() {
           {/* درباره ما */}
           <div className="about" id="about">
             <div className="aboutimg">
-              <img src="4000_4_07-Photoroom.png" alt="about us picture" />
+              <img src="4000_4_07-Photoroom.webp" alt="about us picture" />
             </div>
             <div className="contentbx">
               <h2>درباره ما</h2>
