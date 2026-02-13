@@ -1,25 +1,14 @@
 @font-face {
-  font-family: "shab";
-  src: url("../fonts/Shabnam.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "bol";
-  src: url("../fonts/Raleway-Medium.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
   font-family: shab;
-  src: url(/src/assets/fonts/Shabnam.ttf);
+  src: url("../../assets/fonts/Shabnam.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
-
 @font-face {
   font-family: bol;
-  src: url(/src/assets/fonts/Raleway-Medium.ttf);
+  src: url("../../assets/fonts/Raleway-Medium.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 /* __________باگو پیدا کردم_________ */
 html,
@@ -609,7 +598,7 @@ main {
 }
 .contact-img {
   flex: 1;
-  background: url("../images/contact\ us.webp") no-repeat center center;
+  background: url("/contact-us.webp") no-repeat center center;
   background-size: cover;
   border-radius: 10px;
 }
@@ -1206,8 +1195,7 @@ body.light-mode #progress-bar {
   background-color: #007bff;
 }
 body.light-mode header {
-  background: url("/home-background-light.webp")
-    no-repeat right center;
+  background: url("/home-background-light.webp") no-repeat right center;
   background-size: cover;
   background-position: center;
 }
