@@ -1217,12 +1217,12 @@ body.light-mode ::selection {
 }
 
 .contact-img img {
-  content: url("contact us.webp");
+  content: url("/contact-us.webp");
 }
 
 /* لایت مود – فقط عکس عوض میشه */
 .light-mode .contact-img img {
-  content: url("contact us 2.webp");
+  content: url("/contact-us2.webp");
   width: 1000px;
 }
 
