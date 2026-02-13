@@ -63,7 +63,7 @@ body {
 /* ____________________navbar start________________________ */
 
 header {
-  background-image: url("592d2a1c-82ee-4698-9072-9d91d5cfdab4.webp");
+  background-image: url("/home-background-dark.webp");
   min-height: 100vh;
   background-repeat: no-repeat;
   background-size: cover;
@@ -1206,7 +1206,7 @@ body.light-mode #progress-bar {
   background-color: #007bff;
 }
 body.light-mode header {
-  background: url("ChatGPT\ Image\ Jun\ 27\,\ 2025\,\ 12_43_53\ AM.webp")
+  background: url("/home-background-light.webp")
     no-repeat right center;
   background-size: cover;
   background-position: center;
