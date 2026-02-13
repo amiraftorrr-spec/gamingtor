@@ -9,12 +9,11 @@ export default function Index() {
   const [countdown, setCountdown] = useState(null);
 
   // -------------------- Welcome typing --------------------
-  const welcomeMsg =
-    "به دنیای بازی خوش آمدید. اینجا جایی است که سرگرمی وهیجان با یکدیگر ترکیب میشوند";
+  const welcomeMsg ="به دنیای بازی خوش آمدید اینجا جایی است که سرگرمی و هیجان با یکدیگر ترکیب می شوند ";
   const [typedText, setTypedText] = useState("");
 
   useEffect(() => {
-    let i = 0;
+    let i = -1;
     const interval = setInterval(() => {
       setTypedText((prev) => prev + welcomeMsg.charAt(i));
       i++;
