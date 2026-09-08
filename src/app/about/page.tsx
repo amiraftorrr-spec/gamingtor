@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import SiteThemeToggle from "@/components/SiteThemeToggle";
 
 export default function AboutUs() {
   const [visible, setVisible] = useState(false);
@@ -39,8 +40,12 @@ export default function AboutUs() {
     <section
       ref={sectionRef}
       id="about"
-      className="bg-[#040410] text-white px-[10%] py-20 font-[shab] min-h-screen"
+      className="about-page-main bg-[#040410] text-white px-[10%] py-12 font-[shab] min-h-screen"
     >
+      <div className="max-w-[1400px] mx-auto mb-8">
+        <SiteThemeToggle showBackHome={true} />
+      </div>
+
       <div
         className={`max-w-[1400px] mx-auto space-y-16 transition-all duration-1000 ease-out ${
           visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-20"

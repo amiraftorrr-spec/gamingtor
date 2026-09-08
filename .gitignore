@@ -16,6 +16,7 @@ dist-ssr
 .next/
 out/
 build/
+*.tsbuildinfo
 
 # Reports & testing
 report.json

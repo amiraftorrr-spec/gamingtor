@@ -46,17 +46,17 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center md:px-20"
+      className="auth-page-container min-h-screen flex items-center justify-center bg-cover bg-center px-4 py-8 md:px-20 relative"
       style={{ backgroundImage: "url('/rzer.webp')" }}
     >
-      <div className="w-[460px] bg-black/30 rounded-2xl p-10 text-white backdrop-blur">
+      <div className="auth-card w-full max-w-[460px] bg-black/30 rounded-2xl p-8 md:p-10 text-white backdrop-blur shadow-2xl">
         <div className="flex justify-center mb-4">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
             <img src="/logo.webp" alt="Logo" className="w-20 rounded-full" />
           </div>
         </div>
 
-        <p className="text-center mb-6 text-white">{renderText()}</p>
+        <p className="auth-lead-text text-center mb-6 text-white">{renderText()}</p>
 
         <Formik
           initialValues={{ phone: "" }}

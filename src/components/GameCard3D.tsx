@@ -94,7 +94,7 @@ export default function GameCard3D({
       <p>{game.desc}</p>
       <div className="pricing">{game.price}</div>
 
-      <div style={{ display: "flex", gap: "8px", justifyContent: "center", alignItems: "center", marginTop: "10px" }}>
+      <div className="custom-card-actions">
         {game.link !== "#" ? (
           <Link
             href={game.link}
@@ -109,9 +109,9 @@ export default function GameCard3D({
             type="button"
             className="custom-button-unique-123"
             onClick={() => onQuickPeek(game)}
-            aria-label={`مشاهده مشخصات ${game.name}`}
+            aria-label={`مشاهده جزییات بیشتر بازی ${game.name}`}
           >
-            مشخصات
+            بیشتر
           </button>
         )}
 

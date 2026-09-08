@@ -134,6 +134,25 @@ function estimateTierScore(
   };
 }
 
+// Check if user is browsing via mobile or tablet
+function isMobileDevice(): boolean {
+  if (typeof window === "undefined" || typeof navigator === "undefined") return false;
+  const userAgent =
+    navigator.userAgent ||
+    navigator.vendor ||
+    (window as unknown as { opera?: string }).opera ||
+    "";
+  const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    userAgent
+  );
+  const isTouchMac =
+    /Macintosh/i.test(userAgent) && navigator.maxTouchPoints > 1;
+  const isSmallScreen =
+    window.innerWidth <= 768 &&
+    ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+  return isMobileUA || isTouchMac || isSmallScreen;
+}
+
 // Micro-benchmark 3D canvas render
 async function runGpuMicroBenchmark(): Promise<number> {
   return new Promise((resolve) => {
@@ -181,6 +200,7 @@ export default function SystemChecker({
 }: SystemCheckerProps) {
   // Detection state
   const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const [showMobileModal, setShowMobileModal] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [scanStepIndex, setScanStepIndex] = useState(0);
   const [detectedHardware, setDetectedHardware] =
@@ -197,9 +217,13 @@ export default function SystemChecker({
     "تطبیق بلادرنگ سخت‌افزار با پروفایل گرافیکی ۱۸ بازی...",
   ];
 
-  // Initiate scan with permission dialog
+  // Initiate scan with permission dialog or mobile warning
   const handleStartAnalysis = () => {
-    setShowPermissionModal(true);
+    if (isMobileDevice()) {
+      setShowMobileModal(true);
+    } else {
+      setShowPermissionModal(true);
+    }
   };
 
   // Perform real scan
@@ -395,10 +419,6 @@ export default function SystemChecker({
       <div className="sys-checker-container">
         {/* Header Title */}
         <div className="sys-checker-head">
-          <div className="sys-checker-badge">
-            <i className="bi bi-cpu-fill"></i>
-            <span>آنالیز آنلاین سخت‌افزار (Can You Run It?)</span>
-          </div>
           <h2>سیستم من اجراش می‌کنه؟</h2>
           <p>
             تست دقیق و بی‌واسطه پردازنده، کارت گرافیک و رم سیستم شما، محاسبه
@@ -657,23 +677,6 @@ export default function SystemChecker({
                           </span>
                         </div>
 
-                        {/* FPS Metric Pill */}
-                        <div className="compat-fps-banner">
-                          <div
-                            className="fps-metric"
-                            style={{ color: item.statusColor }}
-                          >
-                            <i
-                              className="bi bi-speedometer2"
-                              style={{ color: item.statusColor }}
-                            ></i>
-                            <strong>{item.fpsEstimate}</strong>
-                          </div>
-                          <span className="preset-pill">
-                            {item.recommendedPreset}
-                          </span>
-                        </div>
-
                         <p className="compat-note">{item.recommendationNote}</p>
                       </div>
                     </div>
@@ -750,6 +753,83 @@ export default function SystemChecker({
               >
                 <i className="bi bi-cpu-fill"></i>
                 <span>تایید و شروع آنالیز سخت‌افزار</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Device Notice Modal */}
+      {showMobileModal && (
+        <div
+          className="sys-permission-modal-overlay"
+          onClick={() => setShowMobileModal(false)}
+        >
+          <div
+            className="sys-permission-modal-box mobile-notice-box"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mobile-notice-title"
+          >
+            <div className="perm-header">
+              <div className="perm-icon mobile-warning-icon">
+                <i className="bi bi-phone"></i>
+              </div>
+              <div>
+                <h3 id="mobile-notice-title">دستگاه موبایل شناسایی شد</h3>
+                <span className="perm-subtitle">
+                  عدم تطابق پلتفرم برای بازی‌های کامپیوتری
+                </span>
+              </div>
+              <button
+                type="button"
+                className="perm-close-btn"
+                onClick={() => setShowMobileModal(false)}
+                aria-label="بستن"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="perm-body">
+              <div className="mobile-notice-highlight">
+                <i className="bi bi-info-circle-fill"></i>
+                <p>
+                  شما با دستگاه موبایل وارد شده‌اید. این بازی‌ها مخصوص پلتفرم
+                  PC هستند؛ برای تست دقیق با کامپیوتر یا لپ‌تاپ خود وارد شوید.
+                </p>
+              </div>
+              <ul>
+                <li>
+                  <i className="bi bi-laptop"></i>
+                  برای سنجش دقیق کارت گرافیک (GPU)، پردازنده و فریم‌ریت، سایت را در مرورگر کامپیوتر یا لپ‌تاپ باز کنید.
+                </li>
+                <li>
+                  <i className="bi bi-controller"></i>
+                  تمام عناوین این بخش نسخه‌های رسمی ویندوز هستند.
+                </li>
+              </ul>
+            </div>
+
+            <div className="perm-footer">
+              <button
+                type="button"
+                className="perm-cancel-btn"
+                onClick={() => {
+                  setShowMobileModal(false);
+                  executeHardwareScan();
+                }}
+              >
+                <span>مشاهده پیش‌نمایش تستی</span>
+              </button>
+              <button
+                type="button"
+                className="perm-confirm-btn"
+                onClick={() => setShowMobileModal(false)}
+              >
+                <i className="bi bi-check-lg"></i>
+                <span>متوجه شدم</span>
               </button>
             </div>
           </div>

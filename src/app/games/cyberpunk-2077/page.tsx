@@ -9,7 +9,7 @@ export default function Cyberpunk2077Page() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#040410] text-white p-8 rtl" dir="rtl">
+    <div className="game-detail-page min-h-screen bg-[#040410] text-white p-8 rtl" dir="rtl">
       <h2 className="text-4xl font-bold text-center mb-8">Cyberpunk 2077</h2>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -130,19 +130,19 @@ export default function Cyberpunk2077Page() {
                   <tr>
                     <td className="border border-yellow-400 p-2">سیستم عامل</td>
                     <td className="border border-yellow-400 p-2">
-                      WINDOWS 10 64-BIT VERSION 1909 OR NEWER
+                      Windows 10 64-bit
                     </td>
                   </tr>
                   <tr>
                     <td className="border border-yellow-400 p-2">پردازنده</td>
                     <td className="border border-yellow-400 p-2">
-                      Intel Core i7-6800 یا AMD Ryzen 5 1600
+                      Intel Core i7-6700 یا AMD Ryzen 5 1600
                     </td>
                   </tr>
                   <tr>
                     <td className="border border-yellow-400 p-2">کارت گرافیک</td>
                     <td className="border border-yellow-400 p-2">
-                      Nvidia GTX 1060 یا AMD RX 580
+                      NVIDIA GeForce GTX 1060 6GB / AMD Radeon RX 580 8GB / Intel Arc A380
                     </td>
                   </tr>
                   <tr>
@@ -168,19 +168,19 @@ export default function Cyberpunk2077Page() {
                   <tr>
                     <td className="border border-yellow-400 p-2">سیستم عامل</td>
                     <td className="border border-yellow-400 p-2">
-                      WINDOWS 10 64-BIT VERSION 1909 OR NEWER
+                      Windows 10 / 11 64-bit
                     </td>
                   </tr>
                   <tr>
                     <td className="border border-yellow-400 p-2">پردازنده</td>
                     <td className="border border-yellow-400 p-2">
-                      AMD RYZEN 5 3600X INTEL CORE i7-8700
+                      Intel Core i7-12700 یا AMD Ryzen 7 7800X3D
                     </td>
                   </tr>
                   <tr>
                     <td className="border border-yellow-400 p-2">کارت گرافیک</td>
                     <td className="border border-yellow-400 p-2">
-                      AMD RADEON RX 5800 XT (8 GB) AMD RADEON RX 6600 XT (8 GB)
+                      NVIDIA GeForce RTX 2060 Super / AMD Radeon RX 5700 XT / Intel Arc A770
                     </td>
                   </tr>
                   <tr>
@@ -190,7 +190,7 @@ export default function Cyberpunk2077Page() {
                   <tr>
                     <td className="border border-yellow-400 p-2">فضای خالی</td>
                     <td className="border border-yellow-400 p-2">
-                      100 گیگابایت SSD
+                      70 گیگابایت NVMe SSD
                     </td>
                   </tr>
                 </tbody>

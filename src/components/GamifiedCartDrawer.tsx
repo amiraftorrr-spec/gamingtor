@@ -16,12 +16,6 @@ interface GamifiedCartDrawerProps {
   countdown: number | null;
 }
 
-const MILESTONES = [
-  { threshold: 50, reward: "کد ۵٪ تخفیف: GAMER5", icon: "bi-tag-fill" },
-  { threshold: 100, reward: "کد ۱۰٪ تخفیف + والپیپر 4K: GAMER10", icon: "bi-gift-fill" },
-  { threshold: 150, reward: "عضویت VIP + کد ۱۵٪: VIPGAMER", icon: "bi-trophy-fill" },
-];
-
 export default function GamifiedCartDrawer({
   isOpen,
   onClose,
@@ -51,12 +45,6 @@ export default function GamifiedCartDrawer({
   const totalToman = usdRate
     ? Math.round(totalUsd * usdRate).toLocaleString("fa-IR") + " تومان"
     : null;
-
-  // Next milestone calculation
-  const nextMilestone =
-    MILESTONES.find((m) => totalUsd < m.threshold) || MILESTONES[MILESTONES.length - 1];
-  const maxThreshold = MILESTONES[MILESTONES.length - 1].threshold;
-  const progressPercent = Math.min(100, Math.round((totalUsd / maxThreshold) * 100));
 
   const handleCheckout = () => {
     if (cart.length === 0) {
@@ -95,40 +83,6 @@ export default function GamifiedCartDrawer({
           </button>
         </div>
 
-        {/* Gamified Reward Milestone Progress */}
-        <div className="cart-milestone-box">
-          <div className="milestone-text-row">
-            <span>
-              {totalUsd >= maxThreshold ? (
-                <strong style={{ color: "#00ff7f" }}>
-                  🎉 تمامی پاداش‌های گیمینگ آنلاک شد!
-                </strong>
-              ) : (
-                <>
-                  فقط{" "}
-                  <strong style={{ color: "#ff4655" }}>
-                    ${(nextMilestone.threshold - totalUsd).toFixed(2)}
-                  </strong>{" "}
-                  تا آنلاک پاداش بعدی:
-                </>
-              )}
-            </span>
-            <span style={{ color: "#00ff7f" }}>{progressPercent}%</span>
-          </div>
-
-          <div className="milestone-track">
-            <div
-              className="milestone-fill"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-
-          <div className="milestone-reward-pill">
-            <i className={`bi ${nextMilestone.icon}`}></i>
-            <span>{nextMilestone.reward}</span>
-          </div>
-        </div>
-
         {/* Item list */}
         <div className="cart-items-container">
           {cart.length > 0 ? (
@@ -160,27 +114,9 @@ export default function GamifiedCartDrawer({
                     </div>
                   </div>
 
-                  {/* Quantity Controls */}
-                  <div className="cart-qty-controls">
-                    <button
-                      type="button"
-                      className="cart-qty-btn"
-                      onClick={() => onUpdateQuantity(item.id, 1)}
-                      aria-label="افزایش تعداد"
-                    >
-                      +
-                    </button>
-                    <span style={{ fontSize: "0.85rem", fontWeight: 700 }}>
-                      {item.quantity}
-                    </span>
-                    <button
-                      type="button"
-                      className="cart-qty-btn"
-                      onClick={() => onUpdateQuantity(item.id, -1)}
-                      aria-label="کاهش تعداد"
-                    >
-                      -
-                    </button>
+                  {/* Quantity Indicator: 1 license per game */}
+                  <div className="cart-qty-indicator" title="حداکثر ۱ نسخه برای هر اکانت گیمینگ">
+                    <span className="cart-qty-badge">۱ عدد</span>
                   </div>
 
                   {/* Delete button */}

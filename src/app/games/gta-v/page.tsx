@@ -9,7 +9,7 @@ export default function GtaVPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#040410] text-white p-8 rtl" dir="rtl">
+    <div className="game-detail-page min-h-screen bg-[#040410] text-white p-8 rtl" dir="rtl">
       <h2 className="text-4xl font-bold text-center mb-8">GTA V</h2>
 
       <div className="flex flex-col lg:flex-row gap-8">

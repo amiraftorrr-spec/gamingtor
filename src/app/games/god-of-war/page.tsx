@@ -9,7 +9,7 @@ export default function GodOfWarPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#040410] text-white p-8 rtl" dir="rtl">
+    <div className="game-detail-page min-h-screen bg-[#040410] text-white p-8 rtl" dir="rtl">
       <h2 className="text-4xl font-bold text-center mb-8">
         God of War: Ragnarök
       </h2>
@@ -120,19 +120,19 @@ export default function GodOfWarPage() {
                   <tr>
                     <td className="border border-yellow-400 p-2">سیستم عامل</td>
                     <td className="border border-yellow-400 p-2">
-                      WINDOWS 10 64-BIT VERSION 1909 OR NEWER
+                      Windows 10 64-bit (Version 1909+)
                     </td>
                   </tr>
                   <tr>
                     <td className="border border-yellow-400 p-2">پردازنده</td>
                     <td className="border border-yellow-400 p-2">
-                      AMD RYZEN 5 1500X INTEL CORE i7-4770K
+                      Intel Core i5-4670K / AMD Ryzen 3 1200
                     </td>
                   </tr>
                   <tr>
                     <td className="border border-yellow-400 p-2">کارت گرافیک</td>
                     <td className="border border-yellow-400 p-2">
-                      AMD RADEON 470 (4 GB) NVIDIA GEFORCE GTX 970 (4 GB)
+                      NVIDIA GeForce GTX 1060 (6 GB) / AMD Radeon RX 5500 XT (8 GB)
                     </td>
                   </tr>
                   <tr>
@@ -142,7 +142,7 @@ export default function GodOfWarPage() {
                   <tr>
                     <td className="border border-yellow-400 p-2">فضای خالی</td>
                     <td className="border border-yellow-400 p-2">
-                      100 گیگابایت SSD
+                      190 گیگابایت SSD
                     </td>
                   </tr>
                 </tbody>
@@ -158,19 +158,19 @@ export default function GodOfWarPage() {
                   <tr>
                     <td className="border border-yellow-400 p-2">سیستم عامل</td>
                     <td className="border border-yellow-400 p-2">
-                      WINDOWS 10 64-BIT VERSION 1909 OR NEWER
+                      Windows 10 / 11 64-bit
                     </td>
                   </tr>
                   <tr>
                     <td className="border border-yellow-400 p-2">پردازنده</td>
                     <td className="border border-yellow-400 p-2">
-                      AMD RYZEN 5 3600X INTEL CORE i7-8700
+                      Intel Core i5-8600 / AMD Ryzen 5 3600
                     </td>
                   </tr>
                   <tr>
                     <td className="border border-yellow-400 p-2">کارت گرافیک</td>
                     <td className="border border-yellow-400 p-2">
-                      AMD RADEON RX 5800 XT (8 GB) AMD RADEON RX 6600 XT (8 GB)
+                      NVIDIA GeForce RTX 2060 Super (8 GB) / AMD Radeon RX 5700 (8 GB)
                     </td>
                   </tr>
                   <tr>
@@ -180,7 +180,7 @@ export default function GodOfWarPage() {
                   <tr>
                     <td className="border border-yellow-400 p-2">فضای خالی</td>
                     <td className="border border-yellow-400 p-2">
-                      100 گیگابایت SSD
+                      190 گیگابایت SSD
                     </td>
                   </tr>
                 </tbody>

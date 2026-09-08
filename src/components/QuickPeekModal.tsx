@@ -127,6 +127,11 @@ export default function QuickPeekModal({
               <h4>
                 <i className="bi bi-cpu"></i> حداقل سیستم مورد نیاز
               </h4>
+              {game.minSpecs.os && (
+                <div className="quickpeek-spec-item">
+                  <span>سیستم عامل:</span> {game.minSpecs.os}
+                </div>
+              )}
               <div className="quickpeek-spec-item">
                 <span>پردازنده:</span> {game.minSpecs.cpu}
               </div>
@@ -145,6 +150,11 @@ export default function QuickPeekModal({
               <h4 style={{ color: "#00ff7f" }}>
                 <i className="bi bi-speedometer2"></i> سیستم پیشنهادی (۶۰+ FPS)
               </h4>
+              {game.recSpecs.os && (
+                <div className="quickpeek-spec-item">
+                  <span>سیستم عامل:</span> {game.recSpecs.os}
+                </div>
+              )}
               <div className="quickpeek-spec-item">
                 <span>پردازنده:</span> {game.recSpecs.cpu}
               </div>

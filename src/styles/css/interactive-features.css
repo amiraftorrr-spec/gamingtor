@@ -497,18 +497,6 @@
   overflow: hidden;
 }
 
-.sys-checker-scan-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #b20710, #ff4655, #ff7675, #b20710);
-  background-size: 200% 100%;
-  animation: barGradient 4s linear infinite;
-}
-
 .scan-card-icon {
   width: 96px;
   height: 96px;
@@ -1273,13 +1261,43 @@
   transform: translateY(-2px);
 }
 
+/* Mobile Warning Specific Styles */
+.perm-icon.mobile-warning-icon {
+  background: rgba(255, 165, 2, 0.14);
+  border: 1px solid rgba(255, 165, 2, 0.45);
+  color: #ffa502;
+}
+
+.mobile-notice-highlight {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(255, 165, 2, 0.1);
+  border: 1px solid rgba(255, 165, 2, 0.35);
+  padding: 1.1rem 1.2rem;
+  border-radius: 14px;
+  margin-bottom: 1.2rem;
+}
+
+.mobile-notice-highlight i {
+  color: #ffa502;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.mobile-notice-highlight p {
+  margin: 0;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.75;
+}
+
 /* ----------------- 5. Hero Text Subtle Contour Glow ----------------- */
 .hero-glowing-title,
 header .container h1 {
-  text-shadow:
-    0 0 6px rgba(255, 70, 85, 0.85),
-    0 0 14px rgba(255, 70, 85, 0.5),
-    0 0 24px rgba(229, 9, 20, 0.3) !important;
+  text-shadow: 0 0 8px rgba(255, 70, 85, 0.3) !important;
   letter-spacing: -0.3px;
 }
 
@@ -1582,4 +1600,829 @@ header .container h1 {
   font-size: 0.7rem;
   color: #8395a7;
   font-family: monospace;
+}
+
+/* Cart Quantity Badge (1 digital copy per game) */
+.cart-qty-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.cart-qty-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #a4b0be;
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   8. Comprehensive Light Mode Adaptations for Interactive Features
+   ========================================================================== */
+
+/* Site-Wide Theme Bar & Navigation Back Button */
+.site-theme-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+  z-index: 20;
+}
+
+.site-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.site-back-btn:hover {
+  background: rgba(255, 70, 85, 0.2);
+  border-color: #ff4655;
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+.site-toggle-wrap {
+  display: flex;
+  align-items: center;
+}
+
+body.light-mode .site-back-btn {
+  background: #ffffff;
+  color: #003366;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 3px 12px rgba(0, 51, 102, 0.08);
+}
+
+body.light-mode .site-back-btn:hover {
+  background: #007bff;
+  color: #ffffff;
+  border-color: #0056b3;
+  box-shadow: 0 4px 14px rgba(0, 123, 255, 0.25);
+}
+
+/* Cards Chevron Expand/Collapse Buttons */
+.cards-chevron-btn {
+  font-size: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #00ff7f;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.cards-chevron-btn:hover {
+  color: #55ffa4;
+  transform: scale(1.15);
+}
+
+body.light-mode .cards-chevron-btn {
+  color: #007bff;
+}
+
+body.light-mode .cards-chevron-btn:hover {
+  color: #0056b3;
+}
+
+/* Hero Text & Controls in Light Mode */
+body.light-mode .hero-glowing-title,
+body.light-mode header .container h1 {
+  text-shadow: 0 1px 2px rgba(0, 51, 102, 0.12) !important;
+  color: #003366 !important;
+}
+
+body.light-mode .navbar-search-btn {
+  background: rgba(0, 51, 102, 0.06);
+  border-color: rgba(0, 51, 102, 0.2);
+  color: #003366;
+}
+
+body.light-mode .navbar-search-btn:hover {
+  background: rgba(0, 123, 255, 0.12);
+  border-color: #007bff;
+  color: #0056b3;
+}
+
+body.light-mode .navbar-search-btn kbd {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+
+/* Spotlight Search in Light Mode */
+body.light-mode .spotlight-overlay {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+body.light-mode .spotlight-container,
+body.light-mode .spotlight-window {
+  background: #ffffff;
+  border: 1px solid #cce0ff;
+  box-shadow: 0 25px 60px rgba(0, 51, 102, 0.15), 0 0 0 1px rgba(0, 51, 102, 0.05);
+}
+
+body.light-mode .spotlight-search-header,
+body.light-mode .spotlight-search-row {
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+body.light-mode .spotlight-search-input,
+body.light-mode .spotlight-input {
+  color: #003366;
+}
+
+body.light-mode .spotlight-search-input::placeholder,
+body.light-mode .spotlight-input::placeholder {
+  color: #8da4be;
+}
+
+body.light-mode .spotlight-search-header .search-icon {
+  color: #007bff;
+}
+
+body.light-mode .spotlight-filter-pills,
+body.light-mode .spotlight-filter-bar {
+  border-bottom: 1px solid #edf2f7;
+  background: #f8fbff;
+}
+
+body.light-mode .spotlight-pill,
+body.light-mode .spotlight-chip {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #3b5978;
+}
+
+body.light-mode .spotlight-pill:hover,
+body.light-mode .spotlight-chip:hover {
+  background: #e2eeff;
+  color: #003366;
+  border-color: #93c5fd;
+}
+
+body.light-mode .spotlight-pill.active,
+body.light-mode .spotlight-chip.active {
+  background: #007bff;
+  border-color: #0056b3;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.25);
+}
+
+body.light-mode .spotlight-item,
+body.light-mode .spotlight-result-item {
+  background: #ffffff;
+  border: 1px solid #edf2f7;
+}
+
+body.light-mode .spotlight-item:hover,
+body.light-mode .spotlight-item.selected,
+body.light-mode .spotlight-result-item:hover,
+body.light-mode .spotlight-result-item.selected {
+  background: #f0f7ff;
+  border-color: #93c5fd;
+}
+
+body.light-mode .spotlight-item-title span:first-child,
+body.light-mode .spotlight-result-name {
+  color: #003366;
+}
+
+body.light-mode .spotlight-item-genre,
+body.light-mode .spotlight-result-desc {
+  color: #577590;
+}
+
+body.light-mode .spotlight-price-usd {
+  color: #059669;
+}
+
+body.light-mode .spotlight-price-toman {
+  color: #0284c7;
+}
+
+body.light-mode .spotlight-footer {
+  background: #f0f6ff;
+  border-top: 1px solid #e2e8f0;
+  color: #577590;
+}
+
+body.light-mode .spotlight-kbd-badge,
+body.light-mode .spotlight-footer kbd {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+/* 3D Game Cards in Light Mode */
+body.light-mode .card-badge {
+  background: rgba(0, 123, 255, 0.1);
+  border: 1px solid rgba(0, 123, 255, 0.25);
+  color: #0056b3;
+}
+
+body.light-mode .card-price-block {
+  background: rgba(0, 51, 102, 0.05);
+  border: 1px solid rgba(0, 51, 102, 0.12);
+}
+
+body.light-mode .card-price-block span:first-child {
+  color: #059669;
+}
+
+body.light-mode .card-price-block span:last-child {
+  color: #0284c7;
+}
+
+body.light-mode .card-quickpeek-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #003366;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+body.light-mode .card-quickpeek-btn:hover {
+  background: #007bff;
+  color: #ffffff;
+  border-color: #0056b3;
+}
+
+body.light-mode .card-desc {
+  color: #4a6984;
+}
+
+/* Quick Peek Modal in Light Mode */
+body.light-mode .quickpeek-overlay,
+body.light-mode .quickpeek-modal-overlay {
+  background: rgba(15, 23, 42, 0.55);
+}
+
+body.light-mode .quickpeek-modal,
+body.light-mode .quickpeek-modal-window {
+  background: #ffffff;
+  border: 1px solid #cce0ff;
+  box-shadow: 0 25px 70px rgba(0, 51, 102, 0.2);
+}
+
+body.light-mode .quickpeek-close-btn,
+body.light-mode .quickpeek-close {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #003366;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .quickpeek-close-btn:hover,
+body.light-mode .quickpeek-close:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+body.light-mode .quickpeek-title,
+body.light-mode .quickpeek-header h2 {
+  color: #003366;
+}
+
+body.light-mode .quickpeek-body p,
+body.light-mode .quickpeek-story {
+  color: #334155 !important;
+}
+
+body.light-mode .quickpeek-spec-box,
+body.light-mode .quickpeek-spec-card {
+  background: #f4f8ff;
+  border: 1px solid #d4e5ff;
+}
+
+body.light-mode .quickpeek-spec-box h4,
+body.light-mode .quickpeek-spec-header h4 {
+  color: #003366;
+}
+
+body.light-mode .quickpeek-spec-item,
+body.light-mode .quickpeek-spec-list li {
+  color: #1e293b;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.light-mode .quickpeek-spec-item span,
+body.light-mode .quickpeek-spec-list span {
+  color: #577590;
+}
+
+/* Hardware Compatibility Checker in Light Mode */
+body.light-mode .sys-checker-advanced-section {
+  color: #003366;
+}
+
+body.light-mode .sys-checker-head h2 {
+  color: #003366;
+}
+
+body.light-mode .sys-checker-head p {
+  color: #4a6984;
+}
+
+body.light-mode .sys-checker-glow-backdrop {
+  background: radial-gradient(circle, rgba(0, 123, 255, 0.08) 0%, transparent 70%);
+}
+
+body.light-mode .sys-checker-scan-card {
+  background: #ffffff;
+  border: 1px solid #cce4ff;
+  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.08);
+}
+
+body.light-mode .scan-card-icon {
+  background: linear-gradient(135deg, rgba(0, 123, 255, 0.15) 0%, rgba(0, 86, 179, 0.1) 100%);
+  color: #007bff;
+}
+
+body.light-mode .scan-card-info h3 {
+  color: #003366;
+}
+
+body.light-mode .scan-card-info p {
+  color: #4a6984;
+}
+
+body.light-mode .scan-features-row span {
+  color: #3b5978;
+}
+
+body.light-mode .sys-checker-start-btn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+body.light-mode .sys-checker-scanning-box {
+  background: #ffffff;
+  border: 1px solid #cce4ff;
+  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.08);
+}
+
+body.light-mode .sys-checker-scanning-box h3 {
+  color: #003366;
+}
+
+body.light-mode .scanning-step-text {
+  color: #5a738e;
+}
+
+body.light-mode .scanning-progress-bar-wrap {
+  background: #e2edf8;
+}
+
+body.light-mode .scanning-terminal-hud {
+  background: #f0f6ff;
+  border: 1px solid #d0e2fc;
+  color: #003366;
+}
+
+body.light-mode .scanning-terminal-hud code {
+  color: #0056b3;
+}
+
+body.light-mode .hardware-hud-card,
+body.light-mode .sys-checker-overview-box {
+  background: #ffffff;
+  border: 1px solid #cce4ff;
+  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.08);
+}
+
+body.light-mode .hud-title,
+body.light-mode .overview-title {
+  color: #003366;
+}
+
+body.light-mode .hud-subtitle,
+body.light-mode .overview-subtitle {
+  color: #4a6984;
+}
+
+body.light-mode .hud-action-btn.primary,
+body.light-mode .rescan-mini-btn {
+  background: #f0f6ff;
+  border: 1px solid #d0e2fc;
+  color: #007bff;
+}
+
+body.light-mode .hud-action-btn.primary:hover,
+body.light-mode .rescan-mini-btn:hover {
+  background: #007bff;
+  color: #ffffff;
+}
+
+body.light-mode .spec-tile,
+body.light-mode .hw-spec-tile {
+  background: #f8fbff;
+  border: 1px solid #dce8f8;
+}
+
+body.light-mode .spec-tile:hover,
+body.light-mode .hw-spec-tile:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 6px 18px rgba(0, 51, 102, 0.06);
+}
+
+body.light-mode .spec-label,
+body.light-mode .hw-spec-label {
+  color: #5a738e;
+}
+
+body.light-mode .spec-value,
+body.light-mode .hw-spec-val {
+  color: #003366;
+}
+
+body.light-mode .spec-sub,
+body.light-mode .hw-spec-extra {
+  color: #6b8299;
+}
+
+body.light-mode .compatible-block-header h3 {
+  color: #003366;
+}
+
+body.light-mode .compatible-block-header p {
+  color: #5a738e;
+}
+
+body.light-mode .filter-tab,
+body.light-mode .compat-tab {
+  background: #f0f5fc;
+  border: 1px solid #d4e2f2;
+  color: #3b5978;
+}
+
+body.light-mode .filter-tab:hover,
+body.light-mode .compat-tab:hover {
+  background: #e2edfa;
+  color: #003366;
+}
+
+body.light-mode .filter-tab.active,
+body.light-mode .compat-tab.active {
+  background: #007bff;
+  border-color: #0056b3;
+  color: #ffffff;
+}
+
+body.light-mode .compat-game-card {
+  background: #ffffff;
+  border: 1px solid #d8e5f5;
+  box-shadow: 0 8px 24px rgba(0, 51, 102, 0.06);
+}
+
+body.light-mode .compat-game-title-link h4,
+body.light-mode .compat-card-title {
+  color: #003366;
+}
+
+body.light-mode .compat-genre,
+body.light-mode .compat-card-genre {
+  color: #5a738e;
+}
+
+body.light-mode .compat-fps-banner {
+  background: #f1f6fc;
+  border: 1px solid #e0ebf7;
+}
+
+body.light-mode .preset-pill {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+body.light-mode .compat-note {
+  color: #475569;
+}
+
+body.light-mode .no-compatible-games {
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  color: #5a738e;
+}
+
+/* Permission Modal */
+body.light-mode .sys-permission-modal-overlay {
+  background: rgba(15, 23, 42, 0.55);
+}
+
+body.light-mode .sys-permission-modal-box {
+  background: #ffffff;
+  border: 1px solid #cce0ff;
+  box-shadow: 0 25px 70px rgba(0, 51, 102, 0.2);
+}
+
+body.light-mode .sys-permission-modal-box h3 {
+  color: #003366;
+}
+
+body.light-mode .perm-subtitle {
+  color: #5a738e;
+}
+
+body.light-mode .mobile-notice-highlight {
+  background: rgba(255, 165, 2, 0.08);
+  border: 1px solid rgba(255, 165, 2, 0.35);
+}
+
+body.light-mode .mobile-notice-highlight p {
+  color: #78350f;
+}
+
+body.light-mode .perm-body p {
+  color: #334155;
+}
+
+body.light-mode .perm-body li {
+  color: #1e293b;
+}
+
+body.light-mode .perm-btn.secondary {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+/* Cart Drawer in Light Mode */
+body.light-mode .cart-drawer-overlay {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+body.light-mode .cart-drawer {
+  background: #ffffff;
+  border-left: 1px solid #cce0ff;
+  box-shadow: -20px 0 60px rgba(0, 51, 102, 0.15);
+}
+
+body.light-mode .cart-drawer-header {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.light-mode .cart-drawer-header h3 {
+  color: #003366;
+}
+
+body.light-mode .cart-drawer-close {
+  background: #f0f6ff;
+  border-color: #d0e2fc;
+  color: #003366;
+}
+
+body.light-mode .cart-drawer-close:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+body.light-mode .cart-item-row {
+  background: #f8fbff;
+  border: 1px solid #e2edf8;
+}
+
+body.light-mode .cart-item-title {
+  color: #003366;
+}
+
+body.light-mode .cart-item-price-usd {
+  color: #059669;
+}
+
+body.light-mode .cart-item-price-toman {
+  color: #0284c7;
+}
+
+body.light-mode .cart-qty-badge {
+  background: #eef5ff;
+  border: 1px solid #d0e2fc;
+  color: #3b5978;
+}
+
+body.light-mode .cart-item-remove-btn {
+  color: #94a3b8;
+}
+
+body.light-mode .cart-item-remove-btn:hover {
+  color: #dc2626;
+}
+
+body.light-mode .cart-drawer-footer {
+  background: #f8fbff;
+  border-top: 1px solid #e2e8f0;
+}
+
+body.light-mode .cart-summary-row span {
+  color: #5a738e;
+}
+
+body.light-mode .cart-total-usd {
+  color: #059669;
+}
+
+body.light-mode .cart-total-toman {
+  color: #0284c7;
+}
+
+body.light-mode .cart-checkout-btn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.35);
+}
+
+body.light-mode .cart-checkout-btn:hover {
+  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5);
+}
+
+/* Mobile Navigation Menu in Light Mode */
+body.light-mode #mobile-menu {
+  background-color: #ffffff !important;
+  box-shadow: -5px 0 25px rgba(0, 51, 102, 0.15) !important;
+  border-left: 1px solid #dce8f8 !important;
+}
+
+body.light-mode #mobile-menu ul li a,
+body.light-mode #mobile-menu button {
+  color: #003366 !important;
+}
+
+body.light-mode #mobile-menu ul li a:hover,
+body.light-mode #mobile-menu button:hover {
+  color: #007bff !important;
+}
+
+body.light-mode #mobile-menu hr {
+  border-color: #e2e8f0 !important;
+}
+
+/* Authentication Pages (/Login, /Register, /Code) in Light Mode */
+body.light-mode .auth-page-container {
+  background-image: linear-gradient(135deg, rgba(235, 243, 255, 0.94) 0%, rgba(245, 250, 255, 0.97) 100%), url('/rzer.webp') !important;
+  background-size: cover;
+  background-position: center;
+}
+
+body.light-mode .auth-card {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border: 1px solid rgba(0, 86, 179, 0.2) !important;
+  box-shadow: 0 20px 60px rgba(0, 51, 102, 0.14), 0 0 0 1px rgba(0, 51, 102, 0.05) !important;
+  color: #003366 !important;
+}
+
+body.light-mode .auth-lead-text {
+  color: #003366 !important;
+}
+
+body.light-mode .auth-subtitle {
+  color: #475569 !important;
+}
+
+body.light-mode .auth-card p {
+  color: #475569 !important;
+}
+
+body.light-mode .auth-card input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+body.light-mode .auth-card input:focus {
+  border-color: #007bff !important;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15) !important;
+}
+
+body.light-mode .auth-card input::placeholder {
+  color: #94a3b8 !important;
+}
+
+body.light-mode .auth-card button[type="button"].w-full.border {
+  border-color: #cbd5e1 !important;
+  color: #1e293b !important;
+  background: #ffffff !important;
+}
+
+body.light-mode .auth-card button[type="button"].w-full.border:hover {
+  background: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+}
+
+body.light-mode .auth-card a {
+  color: #ff4655 !important;
+}
+
+/* About Us Page (/about) in Light Mode */
+body.light-mode .about-page-main,
+body.light-mode #about {
+  background-color: #f2f7ff !important;
+  color: #1e293b !important;
+}
+
+body.light-mode .about-page-main h2 {
+  color: #003366 !important;
+}
+
+body.light-mode .about-page-main p {
+  color: #334155 !important;
+  line-height: 1.85 !important;
+}
+
+body.light-mode .about-page-main .animate-float {
+  background: #ffffff !important;
+  color: #0056b3 !important;
+  border: 1px solid #bfdbfe !important;
+  box-shadow: 0 6px 20px rgba(0, 51, 102, 0.08) !important;
+}
+
+body.light-mode .about-page-main h3 {
+  color: #0056b3 !important;
+}
+
+body.light-mode .about-page-main li {
+  color: #334155 !important;
+}
+
+body.light-mode .about-page-main strong {
+  color: #003366 !important;
+}
+
+body.light-mode .feedback-section {
+  background: #ffffff !important;
+  border: 1px solid #d0e2fc !important;
+  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.08) !important;
+}
+
+body.light-mode .feedback-section h3 {
+  color: #003366 !important;
+}
+
+body.light-mode .feedback-section p {
+  color: #475569 !important;
+}
+
+/* Game Detail Pages (/games/*) in Light Mode */
+body.light-mode .game-detail-page {
+  background-color: #f2f7ff !important;
+  color: #1e293b !important;
+}
+
+body.light-mode .game-detail-page h2 {
+  color: #003366 !important;
+}
+
+body.light-mode .game-detail-page h3 {
+  color: #0056b3 !important;
+}
+
+body.light-mode .game-detail-page h5 {
+  color: #0056b3 !important;
+}
+
+body.light-mode .game-detail-page hr {
+  border-color: #cce0ff !important;
+}
+
+body.light-mode .game-detail-page p {
+  color: #334155 !important;
+  line-height: 1.9 !important;
+}
+
+body.light-mode .game-detail-page table {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 18px rgba(0, 51, 102, 0.06) !important;
+}
+
+body.light-mode .game-detail-page td {
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+body.light-mode .game-detail-page tr:nth-child(even) {
+  background-color: #f8fbff !important;
+}
+
+body.light-mode .game-detail-page td:first-child {
+  background-color: #eef5ff !important;
+  color: #003366 !important;
+  font-weight: 700 !important;
+}
+
+body.light-mode .game-detail-page img {
+  box-shadow: 0 10px 30px rgba(0, 51, 102, 0.1) !important;
 }

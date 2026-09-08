@@ -18,7 +18,7 @@ export default function Home() {
   const [countdown, setCountdown] = useState<number | null>(null);
 
   const welcomeMsg =
-    "به دنیای بازی خوش آمدید؛ اینجا جایی است که سرگرمی و هیجان با یکدیگر ترکیب می‌شوند.";
+    "به دنیای بازی خوش آمدید؛ اینجا جایی است که سرگرمی و هیجان با یکدیگر ترکیب می‌شوند";
   const [typedText, setTypedText] = useState<string>("");
 
   // -------------------- Typewriter Effect --------------------
@@ -44,24 +44,52 @@ export default function Home() {
     setMounted(true);
     try {
       const savedTheme = localStorage.getItem("theme");
-      if (savedTheme === "light") {
-        setIsLight(true);
-        document.body.classList.add("light-mode");
-      }
+      const isLightMode = savedTheme === "light";
+      setIsLight(isLightMode);
+      document.body.classList.toggle("light-mode", isLightMode);
+      document.documentElement.classList.toggle("light-mode", isLightMode);
     } catch {
       // ignore
     }
+
+    const handleThemeChange = (e: Event) => {
+      try {
+        const customEv = e as CustomEvent<{ theme?: string }>;
+        const nextTheme =
+          customEv?.detail?.theme ?? localStorage.getItem("theme");
+        const nextLight = nextTheme === "light";
+        setIsLight((prev) => (prev !== nextLight ? nextLight : prev));
+        document.body.classList.toggle("light-mode", nextLight);
+        document.documentElement.classList.toggle("light-mode", nextLight);
+      } catch {
+        // ignore
+      }
+    };
+
+    window.addEventListener("theme-change", handleThemeChange);
+    window.addEventListener("storage", handleThemeChange);
+    return () => {
+      window.removeEventListener("theme-change", handleThemeChange);
+      window.removeEventListener("storage", handleThemeChange);
+    };
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-    document.body.classList.toggle("light-mode", isLight);
+  const toggleTheme = () => {
+    const nextState = !isLight;
+    setIsLight(nextState);
     try {
-      localStorage.setItem("theme", isLight ? "light" : "dark");
+      localStorage.setItem("theme", nextState ? "light" : "dark");
+      document.body.classList.toggle("light-mode", nextState);
+      document.documentElement.classList.toggle("light-mode", nextState);
+      window.dispatchEvent(
+        new CustomEvent("theme-change", {
+          detail: { theme: nextState ? "light" : "dark" },
+        })
+      );
     } catch {
       // ignore
     }
-  }, [isLight, mounted]);
+  };
 
   // ___________api (Strict 2-Hour Cache to protect token quota)__________________
   useEffect(() => {
@@ -154,58 +182,54 @@ export default function Home() {
   }, []);
 
   const addToCart = (game: Game) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.id === game.id);
-      let updated: CartItem[];
-      if (existing) {
-        updated = prev.map((item) =>
-          item.id === game.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-        toast.info(`تعداد ${game.name} در سبد خرید افزایش یافت (+1)`);
-      } else {
-        updated = [...prev, { ...game, quantity: 1 }];
-        toast.success(`${game.name} به سبد خرید اضافه شد! 🎮`);
-      }
-      try {
-        localStorage.setItem("gamingtor_cart", JSON.stringify(updated));
-      } catch {
-        // ignore
-      }
-      return updated;
+    const existing = cart.find((item) => item.id === game.id);
+    if (existing) {
+      toast.info(`بازی «${game.name}» از قبل در سبد خرید موجود است!`, {
+        toastId: `cart-exist-${game.id}`,
+      });
+      return;
+    }
+    const updated = [...cart, { ...game, quantity: 1 }];
+    setCart(updated);
+    try {
+      localStorage.setItem("gamingtor_cart", JSON.stringify(updated));
+    } catch {
+      // ignore
+    }
+    toast.success(`بازی «${game.name}» به سبد خرید اضافه شد! 🎮`, {
+      toastId: `cart-add-${game.id}`,
     });
   };
 
   const updateQuantity = (gameId: string, delta: number) => {
-    setCart((prev) => {
-      const updated = prev
-        .map((item) => {
-          if (item.id === gameId) {
-            const newQty = item.quantity + delta;
-            return newQty > 0 ? { ...item, quantity: newQty } : null;
-          }
-          return item;
-        })
-        .filter(Boolean) as CartItem[];
+    const updated = cart
+      .map((item) => {
+        if (item.id === gameId) {
+          const newQty = Math.min(1, item.quantity + delta);
+          return newQty > 0 ? { ...item, quantity: newQty } : null;
+        }
+        return item;
+      })
+      .filter(Boolean) as CartItem[];
 
-      try {
-        localStorage.setItem("gamingtor_cart", JSON.stringify(updated));
-      } catch {
-        // ignore
-      }
-      return updated;
-    });
+    setCart(updated);
+    try {
+      localStorage.setItem("gamingtor_cart", JSON.stringify(updated));
+    } catch {
+      // ignore
+    }
   };
 
   const removeItem = (gameId: string) => {
-    setCart((prev) => {
-      const updated = prev.filter((item) => item.id !== gameId);
-      try {
-        localStorage.setItem("gamingtor_cart", JSON.stringify(updated));
-      } catch {
-        // ignore
-      }
-      toast.info("بازی از سبد خرید حذف شد");
-      return updated;
+    const updated = cart.filter((item) => item.id !== gameId);
+    setCart(updated);
+    try {
+      localStorage.setItem("gamingtor_cart", JSON.stringify(updated));
+    } catch {
+      // ignore
+    }
+    toast.info("بازی از سبد خرید حذف شد", {
+      toastId: `cart-remove-${gameId}`,
     });
   };
 
@@ -390,7 +414,7 @@ export default function Home() {
                 type="checkbox"
                 aria-label="تغییر تم تاریک و روشن"
                 checked={!isLight}
-                onChange={() => setIsLight((prev) => !prev)}
+                onChange={toggleTheme}
               />
               <span className="slider"></span>
               <i className="bi bi-sun-fill off"></i>
@@ -478,13 +502,7 @@ export default function Home() {
               {visibleCount < GAMES.length && (
                 <button
                   onClick={showMore}
-                  style={{
-                    fontSize: "40px",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "#00ff7f",
-                  }}
+                  className="cards-chevron-btn"
                   aria-label="مشاهده بیشتر"
                 >
                   <i className="bi bi-chevron-down"></i>
@@ -494,14 +512,8 @@ export default function Home() {
               {visibleCount > 6 && (
                 <button
                   onClick={showLess}
-                  style={{
-                    fontSize: "40px",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "#00ff7f",
-                    marginLeft: "10px",
-                  }}
+                  className="cards-chevron-btn"
+                  style={{ marginLeft: "10px" }}
                   aria-label="مشاهده کمتر"
                 >
                   <i className="bi bi-chevron-up"></i>
@@ -590,8 +602,16 @@ export default function Home() {
               <div className="contact-img">
                 <Image
                   src="/contact-us.webp"
-                  alt="ارتباط با گیمینگ تور"
-                  className="cp"
+                  alt="ارتباط با گیمینگ تور - دارک مود"
+                  className="cp contact-img-dark"
+                  width={640}
+                  height={624}
+                  sizes="(max-width: 900px) 90vw, 640px"
+                />
+                <Image
+                  src="/contact-us2.webp"
+                  alt="ارتباط با گیمینگ تور - لایت مود"
+                  className="cp contact-img-light"
                   width={640}
                   height={624}
                   sizes="(max-width: 900px) 90vw, 640px"

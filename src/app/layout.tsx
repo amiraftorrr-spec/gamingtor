@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import LenisProvider from "@/components/LenisProvider";
 import ToastProvider from "@/components/ToastProvider";
+import ThemeGlobalSync from "@/components/ThemeGlobalSync";
 
 export const metadata: Metadata = {
   title: "Gaming Tor | گیمینگ تور",
@@ -33,7 +34,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fa" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('theme');
+                  if (saved === 'light') {
+                    document.documentElement.classList.add('light-mode');
+                    document.body && document.body.classList.add('light-mode');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body suppressHydrationWarning>
+        <ThemeGlobalSync />
         <LenisProvider>{children}</LenisProvider>
         <ToastProvider />
       </body>

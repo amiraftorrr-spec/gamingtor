@@ -9,7 +9,7 @@ export default function TheLastOfUsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#040410] text-white p-8 rtl" dir="rtl">
+    <div className="game-detail-page min-h-screen bg-[#040410] text-white p-8 rtl" dir="rtl">
       <h2 className="text-4xl font-bold text-center mb-8">The Last of Us</h2>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -164,19 +164,19 @@ export default function TheLastOfUsPage() {
                   <tr>
                     <td className="border border-yellow-400 p-2">سیستم عامل</td>
                     <td className="border border-yellow-400 p-2">
-                      WINDOWS 10 64-BIT VERSION 1909 OR NEWER
+                      WINDOWS 10 / 11 64-BIT (VERSION 1909+)
                     </td>
                   </tr>
                   <tr>
                     <td className="border border-yellow-400 p-2">پردازنده</td>
                     <td className="border border-yellow-400 p-2">
-                      AMD RYZEN 5 3600X INTEL CORE i7-8700
+                      AMD RYZEN 5 3600X / INTEL CORE i7-8700
                     </td>
                   </tr>
                   <tr>
                     <td className="border border-yellow-400 p-2">کارت گرافیک</td>
                     <td className="border border-yellow-400 p-2">
-                      AMD RADEON RX 5800 XT (8 GB) AMD RADEON RX 6600 XT (8 GB)
+                      NVIDIA GEFORCE RTX 2070 SUPER (8 GB) / AMD RADEON RX 6600 XT (8 GB)
                     </td>
                   </tr>
                   <tr>
@@ -186,7 +186,7 @@ export default function TheLastOfUsPage() {
                   <tr>
                     <td className="border border-yellow-400 p-2">فضای خالی</td>
                     <td className="border border-yellow-400 p-2">
-                      100 گیگابایت SSD
+                      100 گیگابایت NVMe SSD
                     </td>
                   </tr>
                 </tbody>

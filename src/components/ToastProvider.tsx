@@ -5,7 +5,7 @@ import { ToastContainer } from "react-toastify";
 export default function ToastProvider() {
   return (
     <ToastContainer
-      position="top-right"
+      position="bottom-left"
       autoClose={3000}
       hideProgressBar={false}
       newestOnTop
@@ -14,6 +14,7 @@ export default function ToastProvider() {
       pauseOnFocusLoss
       draggable
       pauseOnHover
+      limit={3}
     />
   );
 }
