@@ -1,14 +1,16 @@
 @font-face {
   font-family: shab;
-  src: url("../../assets/fonts/Shabnam.ttf") format("truetype");
+  src: url("/fonts/Shabnam.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: bol;
-  src: url("../../assets/fonts/Raleway-Medium.ttf") format("truetype");
+  src: url("/fonts/Raleway-Medium.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 /* __________باگو پیدا کردم_________ */
 html,
@@ -495,6 +497,8 @@ main {
   gap: 40px;
   padding: 20px;
   margin: 0 230px;
+  content-visibility: auto;
+  contain-intrinsic-size: 900px;
 }
 
 .custom-cards-container.second-row {
@@ -509,7 +513,8 @@ main {
 .custom-card {
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  background-color: rgba(17, 25, 40, 0.25);
+  background-color: rgba(17, 25, 40, 0.88);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.125);
   text-align: center;
@@ -575,6 +580,8 @@ main {
   align-items: center;
   height: 100vh;
   font-family: shab;
+  content-visibility: auto;
+  contain-intrinsic-size: 760px;
 }
 
 .contact-h2 {
@@ -668,98 +675,181 @@ main {
 footer {
   background-color: #1d1d29;
   font-size: 16px;
-  padding-top: 50px;
+  padding-top: 60px;
   color: white;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
 }
+
 .ftmaster {
-  width: 1140px;
-  margin: auto;
-  display: flex;
-  justify-content: center;
-  gap: 90px;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 40px 30px;
+  align-items: start;
+  box-sizing: border-box;
 }
+
 .ftcontent {
-  width: 33.3%;
+  width: 100%;
   color: white;
-}
-footer h3 {
-  font-size: 28px;
-  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+  box-sizing: border-box;
 }
+
+footer h3 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+footer h3::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: #ff0055;
+  border-radius: 2px;
+}
+
 .icons {
   text-align: center;
   padding: 0;
-  font-size: 28px;
+  margin: 0;
+  font-size: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  list-style: none;
 }
 
 .icons li {
-  display: inline-block;
-  text-align: center;
-  padding: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+
+.icons li a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.3s ease;
+  font-size: 22px;
+}
+
+.icons li a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
 
 .icons .yt {
   text-decoration: none;
   color: rgb(223, 46, 46);
-  transition: 0.2s;
 }
 
 .icons .yt:hover {
-  color: rgb(255, 0, 0);
+  color: rgb(255, 50, 50);
+  border-color: rgba(255, 50, 50, 0.5);
+  background: rgba(255, 0, 0, 0.15);
 }
 
 .icons .in {
   background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  transition: 0.3s ease;
+}
+
+.icons .in:hover {
+  border-color: rgba(238, 42, 123, 0.5);
+  background: rgba(238, 42, 123, 0.15);
 }
 
 .icons .tw {
   text-decoration: none;
   color: rgb(46, 117, 223);
-  transition: 0.2s;
 }
 
 .icons .tw:hover {
   color: rgb(6, 103, 249);
+  border-color: rgba(6, 103, 249, 0.5);
+  background: rgba(6, 103, 249, 0.15);
 }
 
 .icons .fa {
   text-decoration: none;
   color: rgb(83, 137, 218);
-  transition: 0.2s;
 }
 
 .icons .fa:hover {
   color: rgb(25, 112, 242);
+  border-color: rgba(25, 112, 242, 0.5);
+  background: rgba(25, 112, 242, 0.15);
 }
 
 .ftcontent p {
-  width: 190px;
-  margin: auto;
-  padding: 7px;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  padding: 6px 0;
+  line-height: 1.8;
+  word-break: break-word;
 }
 
 .ftcontent ul {
   text-align: center;
+  padding: 0;
+  margin: 0;
 }
+
 .fast {
   padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
 }
+
 .fast li {
   width: auto;
   text-align: center;
   list-style-type: none;
   text-decoration: none;
-  padding: 7px;
+  padding: 6px 12px;
   position: relative;
 }
+
 .fast a {
   list-style-type: none;
   text-decoration: none;
   color: white;
+  transition: color 0.3s ease;
+  font-size: 15px;
 }
 
 .fast li::before {
@@ -771,28 +861,93 @@ footer h3 {
   width: 0;
   height: 2px;
   background: #ff0055;
-  transition-duration: 0.5s;
+  transition-duration: 0.3s;
 }
+
 .fast li:hover::before {
-  width: 70px;
+  width: 70%;
+}
+
+.fast a:hover {
+  color: #ff0055;
 }
 
 .copyri {
   background: #bea3a3;
   text-align: center;
-  padding: 10px 0;
+  padding: 14px 16px;
   margin-top: 50px;
+  width: 100%;
+  box-sizing: border-box;
 }
+
 .copyri p {
-  color: #343434;
+  color: #2b2b2b;
   margin: 0;
-  font-size: 16px;
-  padding: 7px;
+  font-size: 15px;
+  padding: 0;
+  font-weight: 500;
+  direction: ltr;
 }
 
 .lltt {
-  color: white;
+  color: rgba(255, 255, 255, 0.9);
   direction: rtl;
+  font-size: 14.5px;
+  text-align: center;
+}
+
+/* ==================== ریسپانسیو اختصاصی فوتر ==================== */
+@media (max-width: 1024px) {
+  .ftmaster {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 24px;
+    padding: 0 30px;
+  }
+}
+
+@media (max-width: 640px) {
+  footer {
+    padding-top: 40px;
+  }
+  .ftmaster {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    padding: 0 16px;
+  }
+  footer h3 {
+    font-size: 20px;
+    margin-bottom: 14px;
+  }
+  .ftcontent p {
+    max-width: 320px;
+    font-size: 14px;
+  }
+  .icons li a {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  .copyri {
+    margin-top: 35px;
+    padding: 12px 10px;
+  }
+  .copyri p {
+    font-size: 13.5px;
+  }
+}
+
+@media (max-width: 360px) {
+  .ftmaster {
+    padding: 0 10px;
+    gap: 26px;
+  }
+  footer h3 {
+    font-size: 18px;
+  }
+  .copyri p {
+    font-size: 12.5px;
+  }
 }
 
 #scrollBtn {
@@ -976,17 +1131,6 @@ footer h3 {
     padding: 10px;
   }
 
-  footer .ftmaster {
-    flex-direction: column;
-    gap: 30px;
-  }
-  footer .ftcontent,
-  footer .fast,
-  footer .icons {
-    width: 100%;
-    text-align: center;
-  }
-
   #scrollBtn {
     bottom: 15px;
     right: 15px;
@@ -1065,6 +1209,12 @@ body.light-mode .contact-btn:hover {
 body.light-mode nav {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
+}
+
+body.light-mode .custom-card {
+  background-color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 51, 102, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 51, 102, 0.1);
 }
 
 body.light-mode a {
@@ -1151,6 +1301,22 @@ body.light-mode .contact-form-container-unique textarea {
 }
 body.light-mode footer h3 {
   color: #007bff;
+}
+body.light-mode footer h3::after {
+  background: #007bff;
+}
+body.light-mode .lltt {
+  color: #003366;
+}
+body.light-mode .fast a {
+  color: #003366;
+}
+body.light-mode .fast a:hover {
+  color: #007bff;
+}
+body.light-mode .icons li a {
+  background: rgba(0, 123, 255, 0.08);
+  border: 1px solid rgba(0, 123, 255, 0.2);
 }
 body.light-mode .copyri {
   background: #d0e7ff;
@@ -1513,6 +1679,8 @@ body.dark-mode .slider {
 .gameup-wrapper {
   padding: 40px;
   background: #040410;
+  content-visibility: auto;
+  contain-intrinsic-size: 600px;
 }
 
 /* ================= BACKGROUND ================= */

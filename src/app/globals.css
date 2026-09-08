@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+@import "react-toastify/dist/ReactToastify.css";
+@import "../styles/css/amir.css";
+@import "../styles/css/interactive-features.css";
