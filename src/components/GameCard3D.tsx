@@ -19,34 +19,51 @@ export default function GameCard3D({
   onAddToCart,
 }: GameCard3DProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [transformStyle, setTransformStyle] = useState("");
+  const rafRef = useRef<number | null>(null);
   const [glareStyle, setGlareStyle] = useState({ opacity: 0, background: "" });
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const applyTilt = useCallback((x: number, y: number) => {
     if (!cardRef.current) return;
+
     const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-
-    const rotateX = ((y - centerY) / centerY) * -10; // max -10deg to 10deg
+    const rotateX = ((y - centerY) / centerY) * -10;
     const rotateY = ((x - centerX) / centerX) * 10;
-
     const glareX = (x / rect.width) * 100;
     const glareY = (y / rect.height) * 100;
 
-    setTransformStyle(
-      `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`
-    );
+    cardRef.current.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
     setGlareStyle({
       opacity: 0.35,
       background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.4) 0%, transparent 60%)`,
     });
   }, []);
 
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+
+    rafRef.current = requestAnimationFrame(() => {
+      applyTilt(x, y);
+      rafRef.current = null;
+    });
+  }, [applyTilt]);
+
   const handleMouseLeave = useCallback(() => {
-    setTransformStyle("perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)");
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+
+    if (cardRef.current) {
+      cardRef.current.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+    }
     setGlareStyle({ opacity: 0, background: "" });
   }, []);
 
@@ -56,7 +73,6 @@ export default function GameCard3D({
       className="card-3d-wrapper custom-card fade-slide"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ transform: transformStyle }}
     >
       {/* Glare effect */}
       <div

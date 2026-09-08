@@ -4,138 +4,59 @@ import { useEffect } from "react";
 
 export default function ScrollAnimations() {
   useEffect(() => {
-    let disposed = false;
-    let cleanup: (() => void) | undefined;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
 
-    const setupAnimations = async () => {
-      const reducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-      const [{ default: gsap }, { default: ScrollTrigger }] = await Promise.all([
-        import("gsap"),
-        import("gsap/ScrollTrigger"),
-      ]);
+    if (reducedMotion) return;
 
-      if (disposed) return;
-      gsap.registerPlugin(ScrollTrigger);
+    const sectionTargets = [
+      "#about .aboutimg",
+      "#about .contentbx",
+      ".custom-card",
+      ".gameup-inner",
+      "#contact .contact-content > div",
+      "footer .ftcontent",
+    ];
 
-      if (reducedMotion) {
-        ScrollTrigger.refresh();
-        return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.setAttribute("data-visible", "true");
+            entry.target.dispatchEvent(new CustomEvent("animate-in"));
+          }
+        });
+      },
+      {
+        threshold: 0.12,
+        rootMargin: "0px 0px -40px 0px",
       }
+    );
 
-    // 🔹 درباره ما
-    const animationContext = gsap.context(() => {
-      const aboutElems = document.querySelectorAll(
-      "#about .aboutimg, #about .contentbx"
-      );
-      if (aboutElems.length) {
-      gsap.set(aboutElems, { opacity: 0, y: 80 });
-      gsap.to(aboutElems, {
-        scrollTrigger: {
-          trigger: "#about",
-          start: "top 70%",
-          toggleActions: "play none none none",
-        },
-        opacity: 1,
-        y: 0,
-        duration: 1.2,
-        stagger: 0.4,
-        ease: "power3.out",
+    sectionTargets.forEach((selector) => {
+      document.querySelectorAll(selector).forEach((element) => {
+        const item = element as HTMLElement;
+        item.style.opacity = "0";
+        item.style.transform = "translateY(60px)";
+        if (selector === ".custom-card") {
+          item.style.transform = "translateY(80px) scale(0.96)";
+        }
+        if (selector === "#contact .contact-content > div") {
+          item.style.transform = "translateY(120px) rotateX(-12deg)";
+        }
+        item.addEventListener("animate-in", () => {
+          item.style.transition =
+            "opacity 420ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1)";
+          item.style.opacity = "1";
+          item.style.transform = "translateY(0) scale(1) rotateX(0deg)";
+        });
+        observer.observe(item);
       });
-      }
-
-    // 🔹 کارت های بازی
-      const gameCards = document.querySelectorAll(".custom-card");
-      if (gameCards.length) {
-      gsap.set(gameCards, { opacity: 0, y: 100, scale: 0.9 });
-      gsap.to(gameCards, {
-        scrollTrigger: {
-          trigger: "#games",
-          start: "top 75%",
-          toggleActions: "play none none none",
-        },
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 1,
-        stagger: 0.4,
-        ease: "back.out(1.5)",
-      });
-      }
-
-      const serverWrapper = document.querySelector(".gameup-inner");
-      if (serverWrapper) {
-      gsap.set(serverWrapper, { opacity: 0, y: 80 });
-      gsap.to(serverWrapper, {
-        scrollTrigger: {
-          trigger: ".gameup-wrapper",
-          start: "top 75%",
-          toggleActions: "play none none none",
-        },
-        opacity: 1,
-        y: 0,
-        duration: 1.2,
-        ease: "power3.out",
-      });
-      }
-
-      const contactElems = document.querySelectorAll(
-      "#contact .contact-content > div"
-      );
-      if (contactElems.length) {
-      gsap.set(contactElems, { opacity: 0, y: 120, rotationX: -90 });
-      gsap.to(contactElems, {
-        scrollTrigger: {
-          trigger: "#contact",
-          start: "top 70%",
-          toggleActions: "play none none none",
-        },
-        opacity: 1,
-        y: 0,
-        rotationX: 0,
-        duration: 1.5,
-        stagger: 0.5,
-        ease: "elastic.out(1, 0.5)",
-      });
-      }
-
-    // 🔹 فوتر
-      const footerElems = document.querySelectorAll("footer .ftcontent");
-      if (footerElems.length) {
-      gsap.set(footerElems, { opacity: 0, y: 60 });
-      gsap.to(footerElems, {
-        scrollTrigger: {
-          trigger: "footer",
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        stagger: 0.3,
-        ease: "power3.out",
-      });
-      }
     });
 
-      const refreshAnimations = () => ScrollTrigger.refresh();
-      window.addEventListener("load", refreshAnimations, { once: true });
-      window.addEventListener("resize", refreshAnimations, { passive: true });
-      requestAnimationFrame(refreshAnimations);
-
-      cleanup = () => {
-        window.removeEventListener("load", refreshAnimations);
-        window.removeEventListener("resize", refreshAnimations);
-        animationContext.revert();
-      };
-    };
-
-    void setupAnimations();
-
     return () => {
-      disposed = true;
-      cleanup?.();
+      observer.disconnect();
     };
   }, []);
 

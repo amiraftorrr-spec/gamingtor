@@ -153,6 +153,63 @@ function isMobileDevice(): boolean {
   return isMobileUA || isTouchMac || isSmallScreen;
 }
 
+function getRealBrowserHardware() {
+  if (typeof window === "undefined" || typeof navigator === "undefined") {
+    return {
+      gpuName: "",
+      gpuVendor: "",
+      cpuCores: 0,
+      ramGB: 0,
+    };
+  }
+
+  const nav = navigator as Navigator & {
+    deviceMemory?: number;
+    userAgentData?: { architecture?: string; platform?: string };
+  };
+
+  let gpuName = "";
+  let gpuVendor = "";
+
+  try {
+    const canvas = document.createElement("canvas");
+    const gl =
+      canvas.getContext("webgl") ||
+      (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
+
+    if (gl) {
+      const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+      if (debugInfo) {
+        const rawGpu = String(
+          gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || ""
+        );
+        const rawVendor = String(
+          gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) || ""
+        );
+
+        if (rawGpu && !/swiftshader|llvmpipe|mesa|software|renderer/i.test(rawGpu)) {
+          gpuName = cleanGpuName(rawGpu);
+        }
+        if (rawVendor) gpuVendor = rawVendor;
+      }
+    }
+  } catch {
+    // ignore browser detection failure
+  }
+
+  const cpuCores =
+    typeof navigator !== "undefined" && navigator.hardwareConcurrency
+      ? navigator.hardwareConcurrency
+      : 0;
+
+  const ramGB =
+    typeof nav.deviceMemory === "number" && nav.deviceMemory > 0
+      ? Math.max(4, Math.round(nav.deviceMemory))
+      : 0;
+
+  return { gpuName, gpuVendor, cpuCores, ramGB };
+}
+
 // Micro-benchmark 3D canvas render
 async function runGpuMicroBenchmark(): Promise<number> {
   return new Promise((resolve) => {
@@ -236,16 +293,15 @@ export default function SystemChecker({
     await new Promise((r) => setTimeout(r, 400));
     setScanStepIndex(1);
 
-    // Query hardware via API + WebGL fallback
-    let detectedGpu = "NVIDIA GeForce RTX 2050";
-    let detectedVendor = "NVIDIA Corporation";
+    const browserHardware = getRealBrowserHardware();
+
+    // Prefer real browser values, because Vercel/server values are generic and often empty.
+    let detectedGpu = browserHardware.gpuName || "NVIDIA GeForce RTX 2050";
+    let detectedVendor = browserHardware.gpuVendor || "NVIDIA Corporation";
     let detectedCpuModel = "Intel Core i5-11400H";
     let detectedVram = "4 GB GDDR6";
-    let cpuCores =
-      typeof navigator !== "undefined"
-        ? navigator.hardwareConcurrency || 12
-        : 12;
-    let ramGB = 16;
+    let cpuCores = browserHardware.cpuCores || navigator.hardwareConcurrency || 12;
+    let ramGB = browserHardware.ramGB || 16;
     let platform =
       typeof navigator !== "undefined"
         ? navigator.platform || "PC / x86_64"
@@ -256,38 +312,38 @@ export default function SystemChecker({
       if (res.ok) {
         const data = await res.json();
         if (data && data.success) {
-          if (data.gpuName) detectedGpu = data.gpuName;
+          if (data.cpuModel && !/Intel Core i5 Processor|default|unknown/i.test(data.cpuModel)) {
+            detectedCpuModel = data.cpuModel;
+          }
+          if (data.gpuName && !/NVIDIA GeForce RTX 2050|Generic|Unknown|Intel UHD/i.test(data.gpuName)) {
+            detectedGpu = data.gpuName;
+          }
           if (data.gpuVendor) detectedVendor = data.gpuVendor;
-          if (data.cpuModel) detectedCpuModel = data.cpuModel;
           if (data.vram) detectedVram = data.vram;
-          if (data.cpuCores) cpuCores = data.cpuCores;
-          if (data.ramGB) ramGB = data.ramGB;
+          if (data.cpuCores && data.cpuCores > 0) cpuCores = data.cpuCores;
+          if (data.ramGB && data.ramGB > 0) ramGB = data.ramGB;
           if (data.platform) platform = data.platform;
         }
       }
     } catch {
-      // Fallback to browser WebGL query
-      try {
-        const canvas = document.createElement("canvas");
-        const gl =
-          canvas.getContext("webgl") ||
-          (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
-        if (gl) {
-          const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
-          if (debugInfo) {
-            const rawGpu =
-              String(gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)) || "";
-            const rawVendor =
-              String(gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL)) || "";
-            if (rawGpu) {
-              detectedGpu = cleanGpuName(rawGpu);
-              detectedVendor = rawVendor;
-            }
-          }
-        }
-      } catch {
-        // fallback
-      }
+      // ignore, browser detection remains the source of truth
+    }
+
+    if (browserHardware.gpuName) {
+      detectedGpu = browserHardware.gpuName;
+      detectedVendor = browserHardware.gpuVendor || detectedVendor;
+    }
+    if (browserHardware.cpuCores > 0) {
+      cpuCores = browserHardware.cpuCores;
+    }
+    if (browserHardware.ramGB > 0) {
+      ramGB = browserHardware.ramGB;
+    }
+
+    if (detectedGpu.toLowerCase().includes("swiftshader") || detectedGpu.toLowerCase().includes("llvmpipe")) {
+      detectedGpu = "Intel / AMD Integrated Graphics";
+      detectedVendor = "GPU fallback mode";
+      detectedVram = "Shared VRAM";
     }
 
     // Step 2 & 3
