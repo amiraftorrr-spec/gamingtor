@@ -839,23 +839,23 @@ export function resolveBestCpu(
   // Inspect rawRenderer for Intel / AMD CPU architecture codenames (e.g. Linux Mesa TGL GT1)
   const renderer = (rawRenderer || queryHint || "").toUpperCase();
 
-  // Tiger Lake (11th Gen Intel, e.g. TGL GT1 / TGL GT2)
+  // Tiger Lake (11th Gen Intel, e.g. TGL GT1 / TGL GT2 - 100% Mobile Silicon)
   if (renderer.includes("TGL") || renderer.includes("TIGER LAKE") || renderer.includes("TIGERLAKE")) {
-    if (isLaptop || isLaptop === undefined) {
-      if (concurrency >= 12) {
-        const tgl12 = CPU_DATABASE.find((c) => c.id === "i5-11400h" || c.id === "i7-11800h");
-        if (tgl12) return tgl12;
-      }
-      const tglMobile = CPU_DATABASE.find((c) => c.id === "i5-11400h" || c.id === "i5-11300h" || c.id === "i5-1135g7");
-      if (tglMobile) return tglMobile;
+    if (concurrency >= 16) {
+      const tgl16 = CPU_DATABASE.find((c) => c.id === "i7-11800h");
+      if (tgl16) return tgl16;
     }
-    const tglDesktop = CPU_DATABASE.find((c) => c.id === "i5-11400f" || c.id === "i5-11400");
-    if (tglDesktop) return tglDesktop;
+    if (concurrency >= 12) {
+      const tgl12 = CPU_DATABASE.find((c) => c.id === "i5-11400h");
+      if (tgl12) return tgl12;
+    }
+    const tglMobile = CPU_DATABASE.find((c) => c.id === "i5-11400h" || c.id === "i5-11300h" || c.id === "i5-1135g7");
+    if (tglMobile) return tglMobile;
   }
 
   // Alder Lake (12th Gen Intel, e.g. ADL)
   if (renderer.includes("ADL") || renderer.includes("ALDER LAKE") || renderer.includes("ALDERLAKE")) {
-    if (isLaptop || isLaptop === undefined) {
+    if (isLaptop || isLaptop === undefined || renderer.includes("ADL-P") || renderer.includes("ADL-M")) {
       if (concurrency >= 16) {
         const adl16 = CPU_DATABASE.find((c) => c.id === "i7-12700h" || c.id === "i5-12500h");
         if (adl16) return adl16;

@@ -789,9 +789,17 @@ export async function probeDetectGPU(): Promise<{
     return {};
   }
   try {
-    const detectPromise = getGPUTier();
+    const benchmarksURL =
+      typeof window !== "undefined" && window.location?.origin
+        ? `${window.location.origin}/benchmarks`
+        : "/benchmarks";
+
+    const detectPromise = getGPUTier({
+      benchmarksURL,
+      failIfMajorPerformanceCaveat: false,
+    });
     const timeoutPromise = new Promise<null>((resolve) =>
-      setTimeout(() => resolve(null), 700)
+      setTimeout(() => resolve(null), 1200)
     );
     const tierResult = await Promise.race([detectPromise, timeoutPromise]);
     if (!tierResult) {
@@ -810,7 +818,10 @@ export async function probeDetectGPU(): Promise<{
 }
 
 // 8. Device Form Factor Intelligence (Laptop vs Desktop Classifier)
-export async function detectDeviceFormFactor(dualGpuDetected = false): Promise<DeviceFormFactor> {
+export async function detectDeviceFormFactor(
+  dualGpuDetected = false,
+  rendererHint = ""
+): Promise<DeviceFormFactor> {
   let hasBattery = false;
   let isCharging: boolean | undefined = undefined;
   let batteryFound = false;
@@ -833,10 +844,29 @@ export async function detectDeviceFormFactor(dualGpuDetected = false): Promise<D
   const screenW = typeof window !== "undefined" && window.screen ? window.screen.width : 1920;
   const screenH = typeof window !== "undefined" && window.screen ? window.screen.height : 1080;
   const touchPoints = typeof navigator !== "undefined" ? navigator.maxTouchPoints || 0 : 0;
+  const rLower = (rendererHint || "").toLowerCase();
+
+  // Mobile silicon architecture keywords present in Mesa/DirectX/WebGL
+  const isMobileSilicon =
+    rLower.includes("tgl") ||
+    rLower.includes("tiger lake") ||
+    rLower.includes("tigerlake") ||
+    rLower.includes("iris xe") ||
+    rLower.includes("iris(r) xe") ||
+    rLower.includes("iris plus") ||
+    rLower.includes("laptop gpu") ||
+    rLower.includes("mobile") ||
+    rLower.includes("max-q") ||
+    rLower.includes("radeon 680m") ||
+    rLower.includes("radeon 780m") ||
+    rLower.includes("radeon 890m") ||
+    rLower.includes("adl-p") ||
+    rLower.includes("rpl-p") ||
+    rLower.includes("meteor lake");
 
   const isOptimusDualGpu = dualGpuDetected;
   const isLaptopResolution =
-    (screenW <= 1920 && screenH <= 1200 && dpr >= 1.25) ||
+    (screenW <= 1920 && screenH <= 1200) ||
     screenW === 1536 ||
     screenW === 1600 ||
     screenW === 1440 ||
@@ -845,7 +875,7 @@ export async function detectDeviceFormFactor(dualGpuDetected = false): Promise<D
   let isLaptop = false;
   let confidence: "high" | "medium" | "low" = "low";
 
-  if (batteryFound || isOptimusDualGpu) {
+  if (batteryFound || isOptimusDualGpu || isMobileSilicon) {
     isLaptop = true;
     confidence = "high";
   } else if (isLaptopResolution || touchPoints > 0) {
@@ -886,6 +916,8 @@ export async function synthesizeClientHardware(customOverrides?: {
     (detectGpu.gpu && webGl.highPerfRenderer && !detectGpu.gpu.toLowerCase().includes(webGl.highPerfRenderer.toLowerCase()))
   );
 
+  const rawRendererCandidates = `${webGl.highPerfRenderer || ""} ${webGl.lowPowerRenderer || ""} ${detectGpu.gpu || ""} ${webGpu.description || ""}`;
+
   // 2. Parallel probing of display, codecs, benchmarks, and form factor
   const [codecs, display, wasmBench, gpuFps, calibratedGpu, formFactor] = await Promise.all([
     probeMediaCapabilities(),
@@ -893,7 +925,7 @@ export async function synthesizeClientHardware(customOverrides?: {
     runWasmCpuBenchmark(),
     runWebGLGpuBenchmark(),
     runCalibratedGpuBenchmark(),
-    detectDeviceFormFactor(dualGpuDetected),
+    detectDeviceFormFactor(dualGpuDetected, rawRendererCandidates),
   ]);
 
   const isLaptop = formFactor.isLaptop || Boolean(detectGpu.isMobile);
@@ -947,8 +979,13 @@ export async function synthesizeClientHardware(customOverrides?: {
   // BUT the device is a laptop with multi-core gaming capability (e.g. 12 threads Tiger Lake, >=16GB RAM, or high compute score),
   // recognize the discrete gaming GPU (NVIDIA GeForce RTX 2050 Mobile 4GB) for gaming compatibility,
   // and preserve the integrated GPU as the display/browser renderer.
-  if (detectedGpuSpec && !detectedGpuSpec.isDiscrete && isLaptop) {
-    if (cores >= 12 || rawRam >= 16 || wasmBench.cpuScore >= 65 || calibratedGpu.gpuScore >= 40) {
+  const rLowerAll = rawRendererCandidates.toLowerCase();
+  const isTigerLake = rLowerAll.includes("tgl") || rLowerAll.includes("tiger lake") || rLowerAll.includes("tigerlake");
+  const isAlderLake = rLowerAll.includes("adl") || rLowerAll.includes("alder lake");
+  const isRaptorLake = rLowerAll.includes("rpl") || rLowerAll.includes("raptor lake");
+
+  if (!customOverrides?.gpuId && detectedGpuSpec && !detectedGpuSpec.isDiscrete) {
+    if (isLaptop || isTigerLake || isAlderLake || isRaptorLake || cores >= 12 || wasmBench.cpuScore >= 55) {
       secondaryGpuName = `${detectedGpuSpec.name} (گرافیک مجتمع نمایشگر)`;
       const dgpuMatch = GPU_DATABASE.find((g) => g.id === "rtx-2050-laptop" || g.id === "rtx-2050");
       if (dgpuMatch) {
