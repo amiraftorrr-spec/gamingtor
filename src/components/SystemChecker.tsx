@@ -168,6 +168,14 @@ export default function SystemChecker({
     executeScan(gpuId, cpuId, ramGb);
   };
 
+  const handleQuickSwitchCpu = (cpuId: string) => {
+    handleSaveRefinements(
+      hardware?.gpu.id || overrideGpuId || "",
+      cpuId,
+      hardware?.ram.gb || overrideRamGb || 16
+    );
+  };
+
   const handleResetToAuto = () => {
     setOverrideGpuId("");
     setOverrideCpuId("");
@@ -430,7 +438,7 @@ export default function SystemChecker({
                   <div className="spec-icon cpu-icon">
                     <i className="bi bi-cpu"></i>
                   </div>
-                  <div className="spec-details">
+                  <div className="spec-details" style={{ width: "100%" }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <span className="spec-label">پردازنده مرکزی (CPU)</span>
                       {hardware.cpu.confidence && (
@@ -452,6 +460,49 @@ export default function SystemChecker({
                     <span className="spec-sub">
                       {hardware.cpu.threads} رشته پردازشی • بنچمارک: {hardware.benchmark.cpuScore}/100
                     </span>
+
+                    {hardware.cpu.candidates && hardware.cpu.candidates.length > 1 && (
+                      <div
+                        style={{
+                          marginTop: "8px",
+                          paddingTop: "6px",
+                          borderTop: "1px dashed rgba(255,255,255,0.12)",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "4px",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span style={{ fontSize: "0.67rem", color: "rgba(255,255,255,0.65)" }}>
+                          معادل‌های هم‌رده بر اساس {hardware.cpu.threads} هسته منطقی (تغییر سریع):
+                        </span>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                          {hardware.cpu.candidates.map((cand) => {
+                            const isSelected = hardware.cpu.id === cand.id || hardware.cpu.name === cand.name;
+                            return (
+                              <button
+                                key={cand.id}
+                                type="button"
+                                onClick={() => handleQuickSwitchCpu(cand.id)}
+                                style={{
+                                  fontSize: "0.66rem",
+                                  padding: "2px 7px",
+                                  borderRadius: "4px",
+                                  background: isSelected ? "rgba(0,255,127,0.22)" : "rgba(255,255,255,0.06)",
+                                  color: isSelected ? "#00ff7f" : "rgba(255,255,255,0.85)",
+                                  border: `1px solid ${isSelected ? "rgba(0,255,127,0.45)" : "rgba(255,255,255,0.15)"}`,
+                                  cursor: "pointer",
+                                  transition: "all 0.15s ease",
+                                }}
+                                title={`انتخاب سریع مدل ${cand.name}`}
+                              >
+                                {isSelected ? "✓ " : ""}{cand.name}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 

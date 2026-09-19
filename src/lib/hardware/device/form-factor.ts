@@ -112,20 +112,26 @@ export async function classifyFormFactor(
     });
   }
 
+  const physicalW = Math.round(screenW * dpr);
+  const physicalH = Math.round(screenH * dpr);
+
   // 4. Decision Matrix
   let type: "laptop" | "desktop" | "unknown" = "desktop";
   let confidence = 0.8;
 
-  if (isMobileSilicon || batteryFound) {
+  if (batteryFound) {
     type = "laptop";
-    confidence = batteryFound ? 0.95 : 0.88;
-  } else if (isDesktopSilicon && !batteryFound) {
+    confidence = 0.95;
+  } else if (isMobileSilicon) {
+    type = "laptop";
+    confidence = 0.9;
+  } else if (isDesktopSilicon) {
     type = "desktop";
     confidence = 0.92;
   } else if (isOptimusDualGpu && !isDesktopSilicon) {
     type = "laptop";
     confidence = 0.82;
-  } else if ((screenW === 1366 && screenH === 768) || (screenW === 1536 && screenH === 864)) {
+  } else if (physicalW === 1366 && physicalH === 768 && touchPoints > 0) {
     type = "laptop";
     confidence = 0.7;
   } else {

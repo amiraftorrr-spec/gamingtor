@@ -10,6 +10,7 @@ import {
   findCpuByQuery,
   resolveBestGpu,
   resolveBestCpu,
+  resolveCpuCandidates,
 } from "./hardwareDatabase";
 
 import {
@@ -99,6 +100,7 @@ export interface SynthesizedHardware {
     isLaptop?: boolean;
     confidence?: number;
     confidenceTier?: "very-high" | "high" | "moderate" | "low" | "uncertain";
+    candidates?: CpuSpec[];
   };
   ram: {
     gb: number;
@@ -520,6 +522,7 @@ export async function synthesizeClientHardware(customOverrides?: {
   // 4. CPU Identification Pipeline
   let detectedCpuSpec: CpuSpec | null = null;
   let cpuConfidence = 0.82;
+  const rawRendererForCpu = webGl.highPerfRenderer || detectGpu.gpu || rawRendererCandidates;
 
   if (customOverrides?.cpuId) {
     detectedCpuSpec = CPU_DATABASE.find((c) => c.id === customOverrides.cpuId) || null;
@@ -527,11 +530,10 @@ export async function synthesizeClientHardware(customOverrides?: {
   }
 
   if (!detectedCpuSpec) {
-    const rawRenderer = webGl.highPerfRenderer || detectGpu.gpu || rawRendererCandidates;
     detectedCpuSpec = resolveBestCpu({
       concurrency: cores,
       cpuScore: wasmBench.cpuScore,
-      rawRenderer,
+      rawRenderer: rawRendererForCpu,
       isLaptop,
     });
     cpuConfidence = 0.85;
@@ -547,6 +549,13 @@ export async function synthesizeClientHardware(customOverrides?: {
   }
 
   const finalCpuSpec = detectedCpuSpec || CPU_DATABASE[0];
+
+  const cpuCandidates = resolveCpuCandidates({
+    concurrency: cores,
+    cpuScore: wasmBench.cpuScore,
+    rawRenderer: rawRendererForCpu,
+    isLaptop,
+  });
 
   // 5. RAM Fusion Logic
   let ramGb = customOverrides?.ramGb;
@@ -631,6 +640,7 @@ export async function synthesizeClientHardware(customOverrides?: {
       isLaptop: finalCpuSpec.isLaptop,
       confidence: cpuConfidence,
       confidenceTier: cpuConfFormatted.tier,
+      candidates: cpuCandidates,
     },
     ram: {
       gb: ramGb,

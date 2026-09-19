@@ -9,6 +9,7 @@ import {
   findCpuByQuery,
   resolveBestGpu,
   resolveBestCpu,
+  resolveCpuCandidates,
 } from "../src/lib/hardwareDatabase.ts";
 import {
   cleanGpuName,
@@ -181,6 +182,20 @@ describe("🎮 Hardware Database & Query Engine Tests", () => {
     assert.ok(m3MaxCpu, "Should resolve Apple M3 Max CPU");
     assert.strictEqual(m3MaxCpu.id, "apple-m3-max-cpu");
     assert.strictEqual(m3MaxCpu.vendor, "Apple");
+  });
+
+  it("should provide unbiased multi-candidate CPUs for AMD and Intel equivalent tiers", () => {
+    // 12 threads Desktop (e.g. Ryzen 5 5600 vs Intel i5-12400F)
+    const candidates12 = resolveCpuCandidates({ concurrency: 12, cpuScore: 72, isLaptop: false });
+    assert.ok(candidates12.length >= 2, "Should return at least 2 candidates");
+    const vendors12 = new Set(candidates12.map((c) => c.vendor));
+    assert.ok(vendors12.has("AMD"), "Candidates must include AMD options");
+    assert.ok(vendors12.has("Intel"), "Candidates must include Intel options");
+
+    // 16 threads Laptop (e.g. Ryzen 7 5800H / 6800H vs i7-11800H)
+    const candidatesLaptop16 = resolveCpuCandidates({ concurrency: 16, cpuScore: 76, isLaptop: true });
+    assert.ok(candidatesLaptop16.length >= 2, "Should return at least 2 laptop candidates");
+    assert.ok(candidatesLaptop16.every((c) => c.isLaptop), "All returned laptop candidates must be mobile CPUs");
   });
 });
 

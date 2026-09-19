@@ -66,13 +66,29 @@ export async function probeWebGpuAdapters(): Promise<WebGpuAdapterData> {
       }
     }
 
-    const highPerfInfo = highPerfAdapter && "info" in highPerfAdapter ? (highPerfAdapter as unknown as { info: Record<string, string> }).info : undefined;
-    const lowPowerInfo = lowPowerAdapter && "info" in lowPowerAdapter ? (lowPowerAdapter as unknown as { info: Record<string, string> }).info : undefined;
+    async function extractInfo(ad: GPUAdapter | null) {
+      if (!ad) return undefined;
+      if ("info" in ad && (ad as unknown as { info?: Record<string, string> }).info) {
+        return (ad as unknown as { info: Record<string, string> }).info;
+      }
+      if ("requestAdapterInfo" in ad && typeof (ad as unknown as { requestAdapterInfo?: () => Promise<Record<string, string>> }).requestAdapterInfo === "function") {
+        try {
+          const info = await (ad as unknown as { requestAdapterInfo: () => Promise<Record<string, string>> }).requestAdapterInfo();
+          return info;
+        } catch {}
+      }
+      return undefined;
+    }
+
+    const [highPerfInfo, lowPowerInfo] = await Promise.all([
+      extractInfo(highPerfAdapter),
+      extractInfo(lowPowerAdapter),
+    ]);
 
     let hasDualAdapters = false;
     if (highPerfInfo && lowPowerInfo) {
-      const hpDesc = `${highPerfInfo.vendor || ""} ${highPerfInfo.architecture || ""} ${highPerfInfo.description || ""}`.toLowerCase();
-      const lpDesc = `${lowPowerInfo.vendor || ""} ${lowPowerInfo.architecture || ""} ${lowPowerInfo.description || ""}`.toLowerCase();
+      const hpDesc = `${highPerfInfo.vendor || ""} ${highPerfInfo.architecture || ""} ${highPerfInfo.description || ""} ${highPerfInfo.device || ""}`.toLowerCase().trim();
+      const lpDesc = `${lowPowerInfo.vendor || ""} ${lowPowerInfo.architecture || ""} ${lowPowerInfo.description || ""} ${lowPowerInfo.device || ""}`.toLowerCase().trim();
       if (hpDesc && lpDesc && hpDesc !== lpDesc) {
         hasDualAdapters = true;
       }

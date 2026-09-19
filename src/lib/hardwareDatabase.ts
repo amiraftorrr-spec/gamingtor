@@ -239,10 +239,12 @@ export const GPU_DATABASE: GpuSpec[] = [
   { id: "intel-uhd-730", name: "Intel UHD Graphics 730", vendor: "Intel", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.7, score: 14, isDiscrete: false, architecture: "gen12" },
   { id: "intel-uhd-630", name: "Intel UHD Graphics 630", vendor: "Intel", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.6, score: 11, isDiscrete: false, architecture: "gen9" },
   { id: "intel-uhd-620", name: "Intel UHD Graphics 620", vendor: "Intel", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.5, score: 9, isDiscrete: false, architecture: "gen9" },
+  { id: "intel-uhd-graphics", name: "Intel UHD Graphics", vendor: "Intel", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.7, score: 14, isDiscrete: false, architecture: "gen12" },
   { id: "intel-hd-630", name: "Intel HD Graphics 630", vendor: "Intel", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.5, score: 9, isDiscrete: false, architecture: "gen9" },
   { id: "intel-hd-530", name: "Intel HD Graphics 530", vendor: "Intel", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.4, score: 8, isDiscrete: false, architecture: "gen9" },
   { id: "intel-hd-4600", name: "Intel HD Graphics 4600", vendor: "Intel", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.3, score: 6, isDiscrete: false, architecture: "gen7" },
   { id: "intel-hd-4000", name: "Intel HD Graphics 4000", vendor: "Intel", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.2, score: 4, isDiscrete: false, architecture: "gen7" },
+  { id: "intel-hd-graphics", name: "Intel HD Graphics", vendor: "Intel", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.4, score: 8, isDiscrete: false, architecture: "gen9" },
 
   // --- AMD Integrated GPUs ---
   { id: "amd-radeon-890m", name: "AMD Radeon 890M", vendor: "AMD", vram: "Shared Dynamic VRAM", vramGb: 4, tier: "B", tierScore: 2.8, score: 52, isDiscrete: false, architecture: "rdna3.5" },
@@ -252,6 +254,7 @@ export const GPU_DATABASE: GpuSpec[] = [
   { id: "amd-radeon-680m", name: "AMD Radeon 680M", vendor: "AMD", vram: "Shared Dynamic VRAM", vramGb: 2, tier: "C", tierScore: 1.7, score: 31, isDiscrete: false, architecture: "rdna2" },
   { id: "amd-radeon-660m", name: "AMD Radeon 660M", vendor: "AMD", vram: "Shared Dynamic VRAM", vramGb: 2, tier: "D", tierScore: 1.3, score: 25, isDiscrete: false, architecture: "rdna2" },
   { id: "amd-radeon-610m", name: "AMD Radeon 610M", vendor: "AMD", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.7, score: 14, isDiscrete: false, architecture: "rdna2" },
+  { id: "amd-radeon-graphics", name: "AMD Radeon Graphics (Integrated)", vendor: "AMD", vram: "Shared Dynamic VRAM", vramGb: 2, tier: "C", tierScore: 1.6, score: 30, isDiscrete: false, architecture: "vega" },
   { id: "amd-radeon-vega8", name: "AMD Radeon Vega 8", vendor: "AMD", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 1.0, score: 18, isDiscrete: false, architecture: "vega" },
   { id: "amd-radeon-vega7", name: "AMD Radeon Vega 7", vendor: "AMD", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.9, score: 16, isDiscrete: false, architecture: "vega" },
   { id: "amd-radeon-vega6", name: "AMD Radeon Vega 6", vendor: "AMD", vram: "Shared Dynamic VRAM", vramGb: 1, tier: "D", tierScore: 0.8, score: 14, isDiscrete: false, architecture: "vega" },
@@ -272,6 +275,7 @@ export const GPU_DATABASE: GpuSpec[] = [
   { id: "apple-m1-max", name: "Apple M1 Max GPU", vendor: "Apple", vram: "Unified Memory", vramGb: 32, tier: "S", tierScore: 4.4, score: 80, isDiscrete: false, architecture: "apple-m1" },
   { id: "apple-m1-pro", name: "Apple M1 Pro GPU", vendor: "Apple", vram: "Unified Memory", vramGb: 16, tier: "B", tierScore: 3.4, score: 62, isDiscrete: false, architecture: "apple-m1" },
   { id: "apple-m1", name: "Apple M1 GPU", vendor: "Apple", vram: "Unified Memory", vramGb: 8, tier: "C", tierScore: 2.0, score: 38, isDiscrete: false, architecture: "apple-m1" },
+  { id: "apple-silicon-gpu", name: "Apple Silicon Integrated GPU", vendor: "Apple", vram: "Unified Memory", vramGb: 8, tier: "B", tierScore: 2.5, score: 45, isDiscrete: false, architecture: "apple-silicon" },
 
   // --- Handhelds & APUs ---
   { id: "steam-deck-apu", name: "Steam Deck Custom Aerith APU", vendor: "AMD", vram: "Shared Dynamic VRAM", vramGb: 4, tier: "C", tierScore: 1.8, score: 34, isDiscrete: false, architecture: "rdna2" },
@@ -333,6 +337,8 @@ export const CPU_DATABASE: CpuSpec[] = [
   { id: "i7-13620h", name: "Intel Core i7-13620H", vendor: "Intel", cores: 10, threads: 16, tier: "A", score: 78, generation: "13th Gen Mobile", isLaptop: true },
   { id: "i5-13500h", name: "Intel Core i5-13500H", vendor: "Intel", cores: 12, threads: 16, tier: "A", score: 76, generation: "13th Gen Mobile", isLaptop: true },
   { id: "i5-13420h", name: "Intel Core i5-13420H", vendor: "Intel", cores: 8, threads: 12, tier: "B", score: 72, generation: "13th Gen Mobile", isLaptop: true },
+  { id: "i7-1355u", name: "Intel Core i7-1355U", vendor: "Intel", cores: 10, threads: 12, tier: "B", score: 70, generation: "13th Gen Mobile", isLaptop: true },
+  { id: "i5-1335u", name: "Intel Core i5-1335U", vendor: "Intel", cores: 10, threads: 12, tier: "B", score: 64, generation: "13th Gen Mobile", isLaptop: true },
 
   // --- Intel 12th Gen (Alder Lake) ---
   { id: "i9-12900ks", name: "Intel Core i9-12900KS", vendor: "Intel", cores: 16, threads: 24, tier: "S+", score: 92, generation: "12th Gen" },
@@ -352,6 +358,9 @@ export const CPU_DATABASE: CpuSpec[] = [
   { id: "i7-12700h", name: "Intel Core i7-12700H", vendor: "Intel", cores: 14, threads: 20, tier: "A", score: 82, generation: "12th Gen Mobile", isLaptop: true },
   { id: "i5-12500h", name: "Intel Core i5-12500H", vendor: "Intel", cores: 12, threads: 16, tier: "A", score: 74, generation: "12th Gen Mobile", isLaptop: true },
   { id: "i5-12450h", name: "Intel Core i5-12450H", vendor: "Intel", cores: 8, threads: 12, tier: "B", score: 68, generation: "12th Gen Mobile", isLaptop: true },
+  { id: "i7-1255u", name: "Intel Core i7-1255U", vendor: "Intel", cores: 10, threads: 12, tier: "B", score: 66, generation: "12th Gen Mobile", isLaptop: true },
+  { id: "i5-1235u", name: "Intel Core i5-1235U", vendor: "Intel", cores: 10, threads: 12, tier: "B", score: 60, generation: "12th Gen Mobile", isLaptop: true },
+  { id: "i3-1215u", name: "Intel Core i3-1215U", vendor: "Intel", cores: 6, threads: 8, tier: "C", score: 50, generation: "12th Gen Mobile", isLaptop: true },
 
   // --- Intel 11th Gen (Rocket Lake / Tiger Lake) ---
   { id: "i9-11900k", name: "Intel Core i9-11900K", vendor: "Intel", cores: 8, threads: 16, tier: "A", score: 80, generation: "11th Gen" },
@@ -380,6 +389,8 @@ export const CPU_DATABASE: CpuSpec[] = [
   { id: "i3-10100", name: "Intel Core i3-10100", vendor: "Intel", cores: 4, threads: 8, tier: "C", score: 48, generation: "10th Gen" },
   { id: "i7-10750h", name: "Intel Core i7-10750H", vendor: "Intel", cores: 6, threads: 12, tier: "B", score: 62, generation: "10th Gen Mobile", isLaptop: true },
   { id: "i5-10300h", name: "Intel Core i5-10300H", vendor: "Intel", cores: 4, threads: 8, tier: "C", score: 50, generation: "10th Gen Mobile", isLaptop: true },
+  { id: "i7-10510u", name: "Intel Core i7-10510U", vendor: "Intel", cores: 4, threads: 8, tier: "D", score: 46, generation: "10th Gen Mobile", isLaptop: true },
+  { id: "i5-10210u", name: "Intel Core i5-10210U", vendor: "Intel", cores: 4, threads: 8, tier: "D", score: 42, generation: "10th Gen Mobile", isLaptop: true },
 
   { id: "i9-9900k", name: "Intel Core i9-9900K", vendor: "Intel", cores: 8, threads: 16, tier: "A", score: 74, generation: "9th Gen" },
   { id: "i7-9700k", name: "Intel Core i7-9700K", vendor: "Intel", cores: 8, threads: 8, tier: "B", score: 65, generation: "9th Gen" },
@@ -425,8 +436,11 @@ export const CPU_DATABASE: CpuSpec[] = [
   { id: "ryzen-9-7945hx", name: "AMD Ryzen 9 7945HX", vendor: "AMD", cores: 16, threads: 32, tier: "S+", score: 95, generation: "Zen 4 Mobile", isLaptop: true },
   { id: "ryzen-7-7840hs", name: "AMD Ryzen 7 7840HS", vendor: "AMD", cores: 8, threads: 16, tier: "A", score: 82, generation: "Zen 4 Mobile", isLaptop: true },
   { id: "ryzen-7-7735hs", name: "AMD Ryzen 7 7735HS", vendor: "AMD", cores: 8, threads: 16, tier: "A", score: 77, generation: "Zen 3+ Mobile", isLaptop: true },
+  { id: "ryzen-7-7730u", name: "AMD Ryzen 7 7730U", vendor: "AMD", cores: 8, threads: 16, tier: "B", score: 68, generation: "Zen 3 Mobile", isLaptop: true },
   { id: "ryzen-5-7640hs", name: "AMD Ryzen 5 7640HS", vendor: "AMD", cores: 6, threads: 12, tier: "A", score: 76, generation: "Zen 4 Mobile", isLaptop: true },
   { id: "ryzen-5-7535hs", name: "AMD Ryzen 5 7535HS", vendor: "AMD", cores: 6, threads: 12, tier: "A", score: 70, generation: "Zen 3+ Mobile", isLaptop: true },
+  { id: "ryzen-5-7530u", name: "AMD Ryzen 5 7530U", vendor: "AMD", cores: 6, threads: 12, tier: "B", score: 60, generation: "Zen 3 Mobile", isLaptop: true },
+  { id: "ryzen-3-7320u", name: "AMD Ryzen 3 7320U", vendor: "AMD", cores: 4, threads: 8, tier: "C", score: 48, generation: "Zen 2 Mobile", isLaptop: true },
   { id: "ryzen-7-6800h", name: "AMD Ryzen 7 6800H", vendor: "AMD", cores: 8, threads: 16, tier: "A", score: 76, generation: "Zen 3+ Mobile", isLaptop: true },
   { id: "ryzen-5-6600h", name: "AMD Ryzen 5 6600H", vendor: "AMD", cores: 6, threads: 12, tier: "B", score: 68, generation: "Zen 3+ Mobile", isLaptop: true },
 
@@ -1255,5 +1269,52 @@ export function resolveBestCpu(
 
   pool.sort((a, b) => Math.abs(a.score - cpuScore) - Math.abs(b.score - cpuScore));
   return pool[0] || CPU_DATABASE[0];
+}
+
+export function resolveCpuCandidates(params: {
+  concurrency?: number;
+  cpuScore?: number;
+  rawRenderer?: string;
+  queryHint?: string;
+  isLaptop?: boolean;
+}): CpuSpec[] {
+  const concurrency = params.concurrency ?? 8;
+  const cpuScore = params.cpuScore ?? 65;
+  const isLaptop = params.isLaptop;
+
+  // 1. Primary CPU match
+  const primary = resolveBestCpu(params);
+
+  // 2. Candidate pool filtered by form factor and matching concurrency
+  const pool = CPU_DATABASE.filter((c) => {
+    if (isLaptop !== undefined && Boolean(c.isLaptop) !== isLaptop) return false;
+    const threadDiff = Math.abs(c.threads - concurrency);
+    const coreDiff = Math.abs(c.cores - concurrency);
+    return threadDiff <= 4 || coreDiff <= 2;
+  });
+
+  const amdPool = pool.filter((c) => c.vendor === "AMD");
+  const intelPool = pool.filter((c) => c.vendor === "Intel");
+
+  amdPool.sort((a, b) => Math.abs(a.score - cpuScore) - Math.abs(b.score - cpuScore));
+  intelPool.sort((a, b) => Math.abs(a.score - cpuScore) - Math.abs(b.score - cpuScore));
+
+  const results: CpuSpec[] = [primary];
+
+  for (const c of amdPool) {
+    if (!results.some((r) => r.id === c.id)) {
+      results.push(c);
+      if (results.filter((r) => r.vendor === "AMD").length >= 2) break;
+    }
+  }
+
+  for (const c of intelPool) {
+    if (!results.some((r) => r.id === c.id)) {
+      results.push(c);
+      if (results.filter((r) => r.vendor === "Intel").length >= 2) break;
+    }
+  }
+
+  return results.slice(0, 4);
 }
 
