@@ -740,7 +740,7 @@ export default function Home() {
           <div className="copyri">
             <p>
               <span>Made with &#x1F496; by amir af tor©</span>
-              <span className="footer-version-tag">v 4.3.3</span>
+              <span className="footer-version-tag">v 4.3.5</span>
             </p>
           </div>
         </footer>

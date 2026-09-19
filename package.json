@@ -1,15 +1,17 @@
 {
   "name": "gaming-tor-react",
   "private": true,
-  "version": "0.0.0",
+  "version": "4.3.5",
   "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "tsx --test test/hardwareEngine.test.mjs"
   },
   "dependencies": {
+    "@pmndrs/detect-gpu": "^6.0.22",
     "@studio-freight/lenis": "^1.0.42",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/vite": "^4.1.18",
@@ -37,6 +39,7 @@
     "globals": "^16.5.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
+    "tsx": "^4.23.13",
     "vite": "^7.2.4"
   }
 }
