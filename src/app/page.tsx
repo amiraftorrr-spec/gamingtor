@@ -738,7 +738,10 @@ export default function Home() {
             </div>
           </div>
           <div className="copyri">
-            <p>Made with &#x1F496; by amir af tor©</p>
+            <p>
+              <span>Made with &#x1F496; by amir af tor©</span>
+              <span className="footer-version-tag">v 4.3.3</span>
+            </p>
           </div>
         </footer>
 

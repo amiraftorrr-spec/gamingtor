@@ -979,6 +979,26 @@ footer h3::after {
   padding: 0;
   font-weight: 500;
   direction: ltr;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.footer-version-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 12px;
+  border-radius: 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  background: rgba(255, 70, 85, 0.12);
+  border: 1px solid rgba(255, 70, 85, 0.35);
+  color: #ff4655;
+  box-shadow: 0 0 12px rgba(255, 70, 85, 0.2);
+  user-select: none;
 }
 
 .lltt {
@@ -1421,6 +1441,13 @@ body.light-mode .copyri {
 
 body.light-mode .copyri p {
   color: #1e3a8a;
+}
+
+body.light-mode .footer-version-tag {
+  background: rgba(0, 123, 255, 0.1);
+  border-color: rgba(0, 123, 255, 0.35);
+  color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.15);
 }
 body.light-mode .contact-form-container-unique button:hover {
   background: #007bff;

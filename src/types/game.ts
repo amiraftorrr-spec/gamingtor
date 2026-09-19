@@ -31,12 +31,19 @@ export interface CartItem extends Game {
 export interface DetectedHardware {
   gpuName: string;
   gpuVendor: string;
+  secondaryGpu?: string;
+  gpuDriver?: string;
   cpuModel?: string;
   vramEstimate: string;
   cpuCores: number;
   ramGB: number;
   screenResolution: string;
+  refreshRate?: number;
+  isHdr?: boolean;
+  aspectRatio?: string;
+  colorDepth?: number;
   platform: string;
+  osName?: string;
   tierScore: number; // 1 to 5.5
   benchmarkScore: number;
   systemTierName: string;
