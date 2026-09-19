@@ -882,6 +882,7 @@ export async function detectDeviceFormFactor(
     rLower.includes("radeon 780m") ||
     rLower.includes("radeon 890m") ||
     rLower.includes("adl-p") ||
+    rLower.includes("adl-m") ||
     rLower.includes("rpl-p") ||
     rLower.includes("meteor lake") ||
     rLower.includes("lunar lake") ||
@@ -895,13 +896,11 @@ export async function detectDeviceFormFactor(
     rLower.includes("super") ||
     (rLower.includes("ti") && !rLower.includes("laptop") && !rLower.includes("mobile"));
 
-  // Typical laptop DPI & Resolution indicators (Laptops with 1080p/1440p screens almost always use 125% - 200% scale)
-  const isLaptopDisplay =
-    (dpr >= 1.25 && screenW <= 2560 && screenH <= 1600) ||
-    screenW === 1536 ||
-    screenW === 1600 ||
-    screenW === 1366 ||
-    (touchPoints > 0 && screenW <= 1920);
+  // Typical laptop resolution indicators (1366x768, 1536x864, or touch device)
+  const isLaptopAspect =
+    (screenW === 1536 && screenH === 864) ||
+    (screenW === 1366 && screenH === 768) ||
+    (touchPoints > 0 && screenW <= 1600);
 
   let isLaptop = false;
   let confidence: "high" | "medium" | "low" = "medium";
@@ -912,14 +911,17 @@ export async function detectDeviceFormFactor(
   } else if (isDesktopSilicon && !batteryFound) {
     isLaptop = false;
     confidence = "high";
-  } else if (batteryFound || dualGpuDetected) {
+  } else if (batteryFound) {
     isLaptop = true;
     confidence = "high";
-  } else if (isLaptopDisplay) {
+  } else if (dualGpuDetected && !isDesktopSilicon) {
     isLaptop = true;
     confidence = "medium";
+  } else if (isLaptopAspect && !isDesktopSilicon) {
+    isLaptop = true;
+    confidence = "low";
   } else {
-    // Standard 1080p / 1440p / 4K with DPR=1.0 and no battery is a Desktop
+    // Default to Desktop when no battery or mobile silicon signature is present
     isLaptop = false;
     confidence = "medium";
   }
@@ -999,7 +1001,17 @@ export async function synthesizeClientHardware(customOverrides?: {
       });
       if (match) {
         if (match.isDiscrete) {
-          if (!discreteGpu) discreteGpu = match;
+          if (!discreteGpu) {
+            discreteGpu = match;
+          } else {
+            const currentIsLaptop = Boolean(discreteGpu.isLaptop);
+            const matchIsLaptop = Boolean(match.isLaptop);
+            if (matchIsLaptop === isLaptop && currentIsLaptop !== isLaptop) {
+              discreteGpu = match;
+            } else if (match.name.length > discreteGpu.name.length) {
+              discreteGpu = match;
+            }
+          }
         } else {
           if (!integratedGpu) integratedGpu = match;
         }

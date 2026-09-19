@@ -505,59 +505,18 @@ export function findGpuByQuery(
   const q = normalizeHardwareQuery(query);
   if (!q) return null;
 
-  // 0. Direct PCI Device ID / Chip Codename match
+  // 1. Direct PCI Device ID match (e.g. 25a2, 25ad, 28a0)
   for (const gpu of GPU_DATABASE) {
     if (gpu.pciDeviceIds) {
       for (const pciId of gpu.pciDeviceIds) {
-        if (rawLower.includes(pciId.toLowerCase()) || q.includes(pciId.toLowerCase())) {
+        if (rawLower.includes(pciId.toLowerCase())) {
           return gpu;
         }
       }
     }
   }
 
-  // Check chip codenames like GA107, GA106, AD107, TU117, etc.
-  for (const gpu of GPU_DATABASE) {
-    if (gpu.chipCodename) {
-      const code = gpu.chipCodename.toLowerCase();
-      if (rawLower.includes(code) || q.includes(code)) {
-        if (options?.isLaptop !== undefined) {
-          if (Boolean(gpu.isLaptop) === options.isLaptop) {
-            return gpu;
-          }
-        } else {
-          return gpu;
-        }
-      }
-    }
-  }
-
-  // 0b. Intel Integrated GPU Codename Matches (Mesa / Linux / Windows Driver Strings)
-  if (rawLower.includes("intel") || rawLower.includes("mesa") || rawLower.includes("uhd") || rawLower.includes("iris") || rawLower.includes("hd graphics")) {
-    if (rawLower.includes("iris xe") || rawLower.includes("iris(r) xe") || rawLower.includes("irisxe")) {
-      return GPU_DATABASE.find((g) => g.id === "intel-iris-xe") || null;
-    }
-    if (/\b(tgl|tiger\s*lake)\b/i.test(rawLower) || q.includes("tgl")) {
-      return GPU_DATABASE.find((g) => g.id === "intel-uhd-tgl" || g.id === "intel-uhd-770") || null;
-    }
-    if (/\b(adl|alder\s*lake)\b/i.test(rawLower) || q.includes("adl")) {
-      return GPU_DATABASE.find((g) => g.id === "intel-uhd-770" || g.id === "intel-uhd-730") || null;
-    }
-    if (/\b(cfl|coffee\s*lake|630)\b/i.test(rawLower) || q.includes("cfl") || q.includes("630")) {
-      return GPU_DATABASE.find((g) => g.id === "intel-uhd-630") || null;
-    }
-    if (/\b(kbl|kaby\s*lake|hd 630)\b/i.test(rawLower) || q.includes("kbl")) {
-      return GPU_DATABASE.find((g) => g.id === "intel-hd-630") || null;
-    }
-    if (/\b(skl|skylake|hd 530)\b/i.test(rawLower) || q.includes("skl")) {
-      return GPU_DATABASE.find((g) => g.id === "intel-hd-530") || null;
-    }
-    if (rawLower.includes("uhd") || q.includes("uhd")) {
-      return GPU_DATABASE.find((g) => g.id === "intel-uhd-tgl" || g.id === "intel-uhd-770" || g.id === "intel-uhd-630") || null;
-    }
-  }
-
-  // 1. Direct ID or exact normalized name match
+  // 2. Exact direct ID match or exact cleaned name match
   for (const gpu of GPU_DATABASE) {
     const cleanId = gpu.id.replace(/-/g, "");
     const cleanName = normalizeHardwareQuery(gpu.name);
@@ -566,38 +525,106 @@ export function findGpuByQuery(
     }
   }
 
-  // 2. Specific key matches with form-factor preference
-  const matchingGpus: GpuSpec[] = [];
+  // 3. Multi-factor Scoring Algorithm for Substring and Model Matches
+  interface GpuCandidate {
+    gpu: GpuSpec;
+    score: number;
+  }
+  const candidates: GpuCandidate[] = [];
+
+  const queryHasLaptop =
+    rawLower.includes("laptop") ||
+    rawLower.includes("mobile") ||
+    rawLower.includes("max-q") ||
+    /\b(ga107m|ga106m|ad107m|ad106m|tu117m)\b/i.test(rawLower);
+
+  const queryHasTi = /\bti\b/i.test(rawLower) || q.includes("ti");
+  const queryHasSuper = rawLower.includes("super");
+  const queryHasXtx = rawLower.includes("xtx") || q.includes("xtx");
+  const queryHasXt = !queryHasXtx && (rawLower.includes("xt") || q.includes("xt"));
+
   for (const gpu of GPU_DATABASE) {
     const cleanName = normalizeHardwareQuery(gpu.name);
     const cleanId = gpu.id.replace(/-/g, "");
-    if (cleanName.includes(q) || q.includes(cleanName) || q.includes(cleanId)) {
-      matchingGpus.push(gpu);
-    }
-  }
+    const gpuIsLaptop = Boolean(gpu.isLaptop);
+    const gpuNameLower = gpu.name.toLowerCase();
 
-  if (matchingGpus.length > 0) {
-    if (options?.isLaptop !== undefined) {
-      const formFactorMatch = matchingGpus.find((g) => Boolean(g.isLaptop) === options.isLaptop);
-      if (formFactorMatch) return formFactorMatch;
-    }
-    if (options?.benchScore !== undefined) {
-      matchingGpus.sort(
-        (a, b) => Math.abs(a.score - (options.benchScore ?? 50)) - Math.abs(b.score - (options.benchScore ?? 50))
-      );
-    }
-    return matchingGpus[0];
-  }
+    let matchLen = 0;
+    let baseMatched = false;
 
-  // 3. Substring matching for model numbers (e.g., "2050", "3060", "4070")
-  for (const gpu of GPU_DATABASE) {
-    const idKey = gpu.id.replace(/-/g, "");
-    if (idKey.length >= 4 && q.includes(idKey)) {
-      if (options?.isLaptop !== undefined && Boolean(gpu.isLaptop) !== options.isLaptop) {
-        continue;
+    if (q === cleanId || q === cleanName) {
+      baseMatched = true;
+      matchLen = Math.max(cleanId.length, cleanName.length) + 50;
+    } else if (cleanName.includes(q)) {
+      baseMatched = true;
+      matchLen = q.length;
+    } else if (q.includes(cleanName)) {
+      baseMatched = true;
+      matchLen = cleanName.length;
+    } else if (q.includes(cleanId)) {
+      baseMatched = true;
+      matchLen = cleanId.length;
+    } else {
+      // Model number pattern matching e.g. 4070, 3060, 1650, 7800, 6700, 580, 780m, iris xe
+      const shortId = gpu.id.replace(/^(rtx|gtx|rx|intel|apple|radeon)-/g, "").replace(/-/g, "");
+      if (shortId.length >= 3 && (q.includes(shortId) || rawLower.includes(shortId))) {
+        baseMatched = true;
+        matchLen = shortId.length;
       }
-      return gpu;
     }
+
+    if (!baseMatched) continue;
+
+    let matchScore = matchLen * 10;
+
+    // Form Factor matching
+    if (queryHasLaptop) {
+      if (gpuIsLaptop) matchScore += 100;
+      else matchScore -= 80;
+    } else if (options?.isLaptop === true) {
+      if (gpuIsLaptop) matchScore += 60;
+      else matchScore -= 40;
+    } else if (options?.isLaptop === false) {
+      if (!gpuIsLaptop) matchScore += 60;
+      else matchScore -= 60;
+    }
+
+    // Ti modifier
+    const gpuHasTi = gpuNameLower.includes(" ti") || gpu.id.includes("-ti");
+    if (queryHasTi && gpuHasTi) matchScore += 70;
+    else if (queryHasTi && !gpuHasTi) matchScore -= 60;
+    else if (!queryHasTi && gpuHasTi) matchScore -= 80;
+
+    // Super modifier
+    const gpuHasSuper = gpuNameLower.includes("super") || gpu.id.includes("-super");
+    if (queryHasSuper && gpuHasSuper) matchScore += 70;
+    else if (queryHasSuper && !gpuHasSuper) matchScore -= 60;
+    else if (!queryHasSuper && gpuHasSuper) matchScore -= 80;
+
+    // XT modifier
+    const gpuHasXt = gpuNameLower.includes(" xt") || gpu.id.includes("-xt");
+    if (queryHasXt && gpuHasXt) matchScore += 70;
+    else if (queryHasXt && !gpuHasXt) matchScore -= 60;
+    else if (!queryHasXt && gpuHasXt) matchScore -= 80;
+
+    // XTX modifier
+    const gpuHasXtx = gpuNameLower.includes(" xtx") || gpu.id.includes("-xtx");
+    if (queryHasXtx && gpuHasXtx) matchScore += 90;
+    else if (queryHasXtx && !gpuHasXtx) matchScore -= 80;
+    else if (!queryHasXtx && gpuHasXtx) matchScore -= 100;
+
+    // Benchscore proximity tie-breaker
+    if (options?.benchScore !== undefined) {
+      const diff = Math.abs(gpu.score - options.benchScore);
+      matchScore += Math.max(0, 30 - diff);
+    }
+
+    candidates.push({ gpu, score: matchScore });
+  }
+
+  if (candidates.length > 0) {
+    candidates.sort((a, b) => b.score - a.score);
+    return candidates[0].gpu;
   }
 
   return null;
@@ -605,21 +632,12 @@ export function findGpuByQuery(
 
 export function findCpuByQuery(
   query: string,
-  options?: { isLaptop?: boolean }
+  options?: { isLaptop?: boolean; cpuScore?: number }
 ): CpuSpec | null {
   if (!query) return null;
   const rawLower = query.toLowerCase();
   const q = normalizeHardwareQuery(query);
   if (!q) return null;
-
-  // Infer isLaptop from query itself if not explicitly passed
-  const queryIsLaptop =
-    options?.isLaptop ??
-    (rawLower.includes("laptop") ||
-      rawLower.includes("mobile") ||
-      /\b(i\d-\d{4,5}[h|hx|hs|u|p|g\d])\b/i.test(query) ||
-      /\b(\d{4,5}[h|hx|hs|u|p|g\d])\b/i.test(query) ||
-      /\b(ryzen\s*\d\s*\d{4}[h|hx|hs|u])\b/i.test(query));
 
   // 1. Direct ID or exact normalized name match
   for (const cpu of CPU_DATABASE) {
@@ -630,66 +648,96 @@ export function findCpuByQuery(
     }
   }
 
-  // 2. Substring match with form-factor filtering and longest matching string priority
-  const matchingCpus: { cpu: CpuSpec; matchLength: number; formMatch: boolean }[] = [];
+  const queryHasLaptop =
+    rawLower.includes("laptop") ||
+    rawLower.includes("mobile") ||
+    /\b(i\d-\d{4,5}[h|hx|hs|u|p|g\d])\b/i.test(query) ||
+    /\b(\d{4,5}[h|hx|hs|u|p|g\d])\b/i.test(query) ||
+    /\b(ryzen\s*\d\s*\d{4}[h|hx|hs|u])\b/i.test(query);
+
+  const queryHasX3d = rawLower.includes("x3d") || q.includes("x3d");
+  const queryHasK = /\b\d+[k|kf|ks]\b/i.test(rawLower) || q.includes("14900k") || q.includes("13700k") || q.includes("12600k");
+  const queryHasF = /\b\d+f\b/i.test(rawLower) || q.includes("12400f") || q.includes("10400f") || q.includes("7500f");
+
+  interface CpuCandidate {
+    cpu: CpuSpec;
+    score: number;
+  }
+  const candidates: CpuCandidate[] = [];
+
   for (const cpu of CPU_DATABASE) {
     const cleanName = normalizeHardwareQuery(cpu.name);
     const cleanId = cpu.id.replace(/-/g, "");
+    const cpuIsLaptop = Boolean(cpu.isLaptop);
+    const cpuNameLower = cpu.name.toLowerCase();
 
-    let matched = false;
     let matchLen = 0;
+    let baseMatched = false;
 
     if (q === cleanId || q === cleanName) {
-      matched = true;
-      matchLen = Math.max(cleanId.length, cleanName.length) + 20;
+      baseMatched = true;
+      matchLen = Math.max(cleanId.length, cleanName.length) + 50;
     } else if (cleanName.includes(q)) {
-      matched = true;
+      baseMatched = true;
       matchLen = q.length;
     } else if (q.includes(cleanName)) {
-      matched = true;
+      baseMatched = true;
       matchLen = cleanName.length;
     } else if (q.includes(cleanId)) {
-      matched = true;
+      baseMatched = true;
       matchLen = cleanId.length;
-    }
-
-    if (matched) {
-      const isCpuLaptop = Boolean(cpu.isLaptop);
-      const isFormMatch =
-        queryIsLaptop !== undefined ? (queryIsLaptop ? isCpuLaptop : !isCpuLaptop) : true;
-      matchingCpus.push({ cpu, matchLength: matchLen, formMatch: isFormMatch });
-    }
-  }
-
-  if (matchingCpus.length > 0) {
-    matchingCpus.sort((a, b) => {
-      if (a.formMatch !== b.formMatch) {
-        return a.formMatch ? -1 : 1;
+    } else {
+      // Short model identifier matching e.g. 14900k, 7800x3d, 12400f, 5600x, 11400h
+      const shortId = cpu.id.replace(/^(ryzen-\d-|core-ultra-\d-|i\d-|apple-)/g, "").replace(/-/g, "");
+      if (shortId.length >= 4 && (q.includes(shortId) || rawLower.includes(shortId))) {
+        baseMatched = true;
+        matchLen = shortId.length;
       }
-      return b.matchLength - a.matchLength;
-    });
-
-    return matchingCpus[0].cpu;
-  }
-
-  // 3. Substring matching for model numbers (e.g. "14900k", "7800x3d", "12400f", "11400h")
-  const modelMatches: { cpu: CpuSpec; len: number; formMatch: boolean }[] = [];
-  for (const cpu of CPU_DATABASE) {
-    const idKey = cpu.id.replace(/-/g, "");
-    if (idKey.length >= 4 && q.includes(idKey)) {
-      const isCpuLaptop = Boolean(cpu.isLaptop);
-      const isFormMatch =
-        queryIsLaptop !== undefined ? (queryIsLaptop ? isCpuLaptop : !isCpuLaptop) : true;
-      modelMatches.push({ cpu, len: idKey.length, formMatch: isFormMatch });
     }
+
+    if (!baseMatched) continue;
+
+    let matchScore = matchLen * 10;
+
+    // Form Factor matching
+    if (queryHasLaptop) {
+      if (cpuIsLaptop) matchScore += 100;
+      else matchScore -= 80;
+    } else if (options?.isLaptop === true) {
+      if (cpuIsLaptop) matchScore += 60;
+      else matchScore -= 40;
+    } else if (options?.isLaptop === false) {
+      if (!cpuIsLaptop) matchScore += 60;
+      else matchScore -= 60;
+    }
+
+    // X3D modifier
+    const cpuHasX3d = cpuNameLower.includes("x3d") || cpu.id.includes("x3d");
+    if (queryHasX3d && cpuHasX3d) matchScore += 80;
+    else if (queryHasX3d && !cpuHasX3d) matchScore -= 70;
+    else if (!queryHasX3d && cpuHasX3d) matchScore -= 70;
+
+    // K series modifier
+    const cpuHasK = cpu.id.includes("k");
+    if (queryHasK && cpuHasK) matchScore += 40;
+    else if (queryHasK && !cpuHasK) matchScore -= 30;
+
+    // F series modifier
+    const cpuHasF = cpu.id.includes("f");
+    if (queryHasF && cpuHasF) matchScore += 40;
+
+    // Score proximity
+    if (options?.cpuScore !== undefined) {
+      const diff = Math.abs(cpu.score - options.cpuScore);
+      matchScore += Math.max(0, 20 - diff);
+    }
+
+    candidates.push({ cpu, score: matchScore });
   }
 
-  if (modelMatches.length > 0) {
-    modelMatches.sort((a, b) => {
-      if (a.formMatch !== b.formMatch) return a.formMatch ? -1 : 1;
-      return b.len - a.len;
-    });
-    return modelMatches[0].cpu;
+  if (candidates.length > 0) {
+    candidates.sort((a, b) => b.score - a.score);
+    return candidates[0].cpu;
   }
 
   return null;
@@ -860,6 +908,19 @@ export function resolveBestCpu(
   // Inspect rawRenderer and queryHint for architecture signatures and vendor clues
   const renderer = `${rawRenderer || ""} ${queryHint || ""}`.trim().toUpperCase();
 
+  const isExplicitMobile =
+    isLaptop === true ||
+    renderer.includes("MOBILE") ||
+    renderer.includes("LAPTOP") ||
+    renderer.includes("MAX-Q") ||
+    renderer.includes("ADL-P") ||
+    renderer.includes("ADL-M") ||
+    renderer.includes("TGL") ||
+    renderer.includes("PHOENIX") ||
+    renderer.includes("780M") ||
+    renderer.includes("680M") ||
+    renderer.includes("890M");
+
   // ==========================================
   // 1. APPLE SILICON ARCHITECTURE DECODING
   // ==========================================
@@ -929,7 +990,7 @@ export function resolveBestCpu(
       renderer.includes("7840") ||
       renderer.includes("7640")
     ) {
-      if (isLaptop || isLaptop === undefined) {
+      if (isExplicitMobile) {
         if (concurrency >= 32) return CPU_DATABASE.find((c) => c.id === "ryzen-9-7945hx") || CPU_DATABASE[0];
         if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "ryzen-7-7840hs") || CPU_DATABASE[0];
         if (concurrency >= 12) return CPU_DATABASE.find((c) => c.id === "ryzen-5-7640hs") || CPU_DATABASE[0];
@@ -953,7 +1014,7 @@ export function resolveBestCpu(
       renderer.includes("5800") ||
       renderer.includes("5600")
     ) {
-      if (isLaptop || isLaptop === undefined) {
+      if (isExplicitMobile) {
         if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "ryzen-7-6800h" || c.id === "ryzen-7-5800h" || c.id === "ryzen-7-7735hs") || CPU_DATABASE[0];
         if (concurrency >= 12) return CPU_DATABASE.find((c) => c.id === "ryzen-5-6600h" || c.id === "ryzen-5-5600h" || c.id === "ryzen-5-7535hs") || CPU_DATABASE[0];
         return CPU_DATABASE.find((c) => c.id === "ryzen-5-5500u" || c.id === "ryzen-3-5300u") || CPU_DATABASE[0];
@@ -976,7 +1037,7 @@ export function resolveBestCpu(
       renderer.includes("3700") ||
       renderer.includes("3600")
     ) {
-      if (isLaptop || isLaptop === undefined) {
+      if (isExplicitMobile) {
         if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "ryzen-7-4800h") || CPU_DATABASE[0];
         if (concurrency >= 12) return CPU_DATABASE.find((c) => c.id === "ryzen-5-4600h") || CPU_DATABASE[0];
       }
@@ -1029,7 +1090,7 @@ export function resolveBestCpu(
     renderer.includes("140V") ||
     renderer.includes("130V")
   ) {
-    if (isLaptop || isLaptop === undefined) {
+    if (isExplicitMobile) {
       if (concurrency >= 22) return CPU_DATABASE.find((c) => c.id === "core-ultra-9-185h") || CPU_DATABASE[0];
       if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "core-ultra-7-155h") || CPU_DATABASE[0];
       return CPU_DATABASE.find((c) => c.id === "core-ultra-5-125h") || CPU_DATABASE[0];
@@ -1055,7 +1116,7 @@ export function resolveBestCpu(
 
   // Alder Lake (12th Gen Intel, e.g. ADL)
   if (renderer.includes("ADL") || renderer.includes("ALDER LAKE") || renderer.includes("ALDERLAKE")) {
-    if (isLaptop || isLaptop === undefined || renderer.includes("ADL-P") || renderer.includes("ADL-M")) {
+    if (isExplicitMobile || renderer.includes("ADL-P") || renderer.includes("ADL-M")) {
       if (concurrency >= 20) {
         const adl20 = CPU_DATABASE.find((c) => c.id === "i7-12700h");
         if (adl20) return adl20;
@@ -1081,7 +1142,7 @@ export function resolveBestCpu(
 
   // Raptor Lake (13th/14th Gen Intel, e.g. RPL)
   if (renderer.includes("RPL") || renderer.includes("RAPTOR LAKE") || renderer.includes("RAPTORLAKE")) {
-    if (isLaptop || isLaptop === undefined) {
+    if (isExplicitMobile) {
       if (concurrency >= 24) {
         const rpl24 = CPU_DATABASE.find((c) => c.id === "i9-14900hx" || c.id === "i9-13980hx");
         if (rpl24) return rpl24;
@@ -1122,7 +1183,7 @@ export function resolveBestCpu(
     renderer.includes("COMETLAKE") ||
     renderer.includes("UHD 630")
   ) {
-    if (isLaptop || isLaptop === undefined) {
+    if (isExplicitMobile) {
       if (concurrency >= 12) {
         const cfl12 = CPU_DATABASE.find((c) => c.id === "i7-10750h" || c.id === "i7-9750h" || c.id === "i7-8750h");
         if (cfl12) return cfl12;

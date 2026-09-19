@@ -387,36 +387,7 @@ export default function SystemChecker({
                   </div>
                   <div className="spec-details">
                     <span className="spec-label">حافظه رم و سیستم‌عامل</span>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "6px" }}>
-                      <strong className="spec-value">{hardware.ram.label}</strong>
-                      <div style={{ display: "flex", gap: "4px" }}>
-                        {[8, 16, 32, 64].map((gb) => (
-                          <button
-                            key={gb}
-                            type="button"
-                            style={{
-                              padding: "2px 6px",
-                              fontSize: "0.68rem",
-                              borderRadius: "4px",
-                              background: hardware.ram.gb === gb ? "rgba(168,85,247,0.35)" : "rgba(255,255,255,0.06)",
-                              border: hardware.ram.gb === gb ? "1px solid #c084fc" : "1px solid rgba(255,255,255,0.1)",
-                              color: "#fff",
-                              cursor: "pointer",
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleSaveRefinements(
-                                overrideGpuId || hardware.gpu.id || "",
-                                overrideCpuId || hardware.cpu.id || "",
-                                gb
-                              );
-                            }}
-                          >
-                            {gb}GB
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                    <strong className="spec-value">{hardware.ram.label}</strong>
                     <span className="spec-sub">
                       {hardware.os.name} • سرعت: {hardware.benchmark.gflops} GFLOPS
                     </span>
@@ -437,106 +408,6 @@ export default function SystemChecker({
                       {hardware.display.aspectRatio} {hardware.display.isHdr ? "• مجهز به HDR" : ""}
                     </span>
                   </div>
-                </div>
-              </div>
-
-              {/* Quick Switcher Bar for Popular GPUs */}
-              <div
-                className="quick-hardware-switchers"
-                style={{
-                  marginTop: "16px",
-                  paddingTop: "14px",
-                  borderTop: "1px solid rgba(255,255,255,0.08)",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    gap: "8px",
-                    marginBottom: "8px",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "0.82rem",
-                      color: "#a4b0be",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                    }}
-                  >
-                    <i className="bi bi-lightning-charge-fill" style={{ color: "#ffd700" }}></i>
-                    انتخاب سریع کارت گرافیک برای مقایسه یا لپ‌تاپ‌های دوگانه (Optimus):
-                  </span>
-                  {(overrideGpuId || overrideCpuId || overrideRamGb !== 16) && (
-                    <button
-                      type="button"
-                      onClick={handleResetToAuto}
-                      style={{
-                        background: "transparent",
-                        border: "none",
-                        color: "#ff6b6b",
-                        fontSize: "0.78rem",
-                        cursor: "pointer",
-                        textDecoration: "underline",
-                      }}
-                    >
-                      بازگشت به تشخیص خودکار سخت‌افزار
-                    </button>
-                  )}
-                </div>
-
-                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                  {[
-                    { id: "rtx-4060-laptop", label: "RTX 4060 Laptop (8GB)" },
-                    { id: "rtx-3060-laptop", label: "RTX 3060 Laptop (6GB)" },
-                    { id: "rtx-3050-laptop", label: "RTX 3050 Laptop (4GB)" },
-                    { id: "rtx-2050-laptop", label: "RTX 2050 Laptop (4GB)" },
-                    { id: "gtx-1650-laptop", label: "GTX 1650 Laptop (4GB)" },
-                    { id: "rtx-4070", label: "RTX 4070 (12GB)" },
-                    { id: "rtx-3060", label: "RTX 3060 (12GB)" },
-                    { id: "rx-7800-xt", label: "RX 7800 XT (16GB)" },
-                    { id: "rx-6600", label: "RX 6600 (8GB)" },
-                    { id: "radeon-780m", label: "Radeon 780M (مجتمع)" },
-                    { id: "intel-iris-xe", label: "Iris Xe (مجتمع)" },
-                  ].map((item) => {
-                    const isSelected =
-                      overrideGpuId === item.id ||
-                      (!overrideGpuId && hardware.gpu.id === item.id);
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        style={{
-                          padding: "5px 10px",
-                          borderRadius: "6px",
-                          fontSize: "0.76rem",
-                          fontWeight: "600",
-                          background: isSelected
-                            ? "rgba(0,255,127,0.25)"
-                            : "rgba(255,255,255,0.06)",
-                          border: isSelected
-                            ? "1px solid #00ff7f"
-                            : "1px solid rgba(255,255,255,0.12)",
-                          color: isSelected ? "#00ff7f" : "#e2e8f0",
-                          cursor: "pointer",
-                          transition: "all 0.2s ease",
-                        }}
-                        onClick={() =>
-                          handleSaveRefinements(
-                            item.id,
-                            overrideCpuId || hardware.cpu.id || "",
-                            overrideRamGb
-                          )
-                        }
-                      >
-                        {item.label}
-                      </button>
-                    );
-                  })}
                 </div>
               </div>
             </div>

@@ -56,6 +56,23 @@ describe("🎮 Hardware Database & Query Engine Tests", () => {
     assert.ok(g4060ti, "RTX 4060 Ti should be matched");
     assert.strictEqual(g4060ti.tier, "A");
 
+    // 2b. Suffix Distinctions: Ti, Super, XT, XTX
+    const g4070ti = findGpuByQuery("NVIDIA GeForce RTX 4070 Ti");
+    assert.ok(g4070ti, "RTX 4070 Ti should match Ti specifically");
+    assert.strictEqual(g4070ti.id, "rtx-4070-ti");
+
+    const g4070super = findGpuByQuery("NVIDIA GeForce RTX 4070 SUPER");
+    assert.ok(g4070super, "RTX 4070 Super should match Super specifically");
+    assert.strictEqual(g4070super.id, "rtx-4070-super");
+
+    const g7900xtx = findGpuByQuery("AMD Radeon RX 7900 XTX");
+    assert.ok(g7900xtx, "RX 7900 XTX should match XTX specifically");
+    assert.strictEqual(g7900xtx.id, "rx-7900-xtx");
+
+    const g6700xt = findGpuByQuery("AMD Radeon RX 6700 XT");
+    assert.ok(g6700xt, "RX 6700 XT should match XT specifically");
+    assert.strictEqual(g6700xt.id, "rx-6700-xt");
+
     // 3. AMD Radeon RX 7800 XT
     const rx7800 = findGpuByQuery("AMD Radeon RX 7800 XT");
     assert.ok(rx7800, "RX 7800 XT should be matched");
