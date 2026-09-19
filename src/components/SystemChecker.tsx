@@ -35,6 +35,9 @@ export default function SystemChecker({
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [showMobileModal, setShowMobileModal] = useState(false);
   const [showRefineModal, setShowRefineModal] = useState(false);
+  const [showEvidenceModal, setShowEvidenceModal] = useState(false);
+  const [showDebugInspector, setShowDebugInspector] = useState(false);
+  const [copiedReport, setCopiedReport] = useState(false);
 
   // Hardware State
   const [hardware, setHardware] = useState<SynthesizedHardware | null>(null);
@@ -176,6 +179,16 @@ export default function SystemChecker({
     executeScan("", "", 16);
   };
 
+  const handleCopyReport = () => {
+    if (!hardware) return;
+    try {
+      const report = JSON.stringify(hardware, null, 2);
+      navigator.clipboard.writeText(report);
+      setCopiedReport(true);
+      setTimeout(() => setCopiedReport(false), 2500);
+    } catch {}
+  };
+
   // Filtered hardware options for Refine Modal
   const filteredGpus: GpuSpec[] = useMemo(() => {
     if (!gpuSearch.trim()) return GPU_DATABASE.slice(0, 24);
@@ -305,6 +318,22 @@ export default function SystemChecker({
                       style={{ color: "#00ff7f", marginLeft: "6px" }}
                     ></i>
                     {hardware.tierTitle}
+                    {hardware.os.isLaptop !== undefined && (
+                      <span
+                        style={{
+                          marginRight: "10px",
+                          padding: "2px 8px",
+                          borderRadius: "4px",
+                          fontSize: "0.75rem",
+                          background: hardware.os.isLaptop ? "rgba(0,210,211,0.2)" : "rgba(168,85,247,0.2)",
+                          color: hardware.os.isLaptop ? "#00d2d3" : "#c084fc",
+                          border: `1px solid ${hardware.os.isLaptop ? "rgba(0,210,211,0.4)" : "rgba(168,85,247,0.4)"}`,
+                        }}
+                      >
+                        <i className={hardware.os.isLaptop ? "bi bi-laptop" : "bi bi-pc-display"} style={{ marginLeft: "4px" }}></i>
+                        {hardware.os.isLaptop ? "لپ‌تاپ گیمینگ" : "سیستم دسکتاپ"}
+                      </span>
+                    )}
                   </span>
                   <h3 className="hud-title">
                     {hardware.gpu.name}
@@ -316,7 +345,25 @@ export default function SystemChecker({
                   </h3>
                 </div>
 
-                <div className="hud-actions" style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <div className="hud-actions" style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  <button
+                    type="button"
+                    className="hud-action-btn secondary"
+                    onClick={() => setShowEvidenceModal(true)}
+                    title="مشاهده شواهد، منابع داده و درجه اطمینان علمی سیستم تشخیص"
+                  >
+                    <i className="bi bi-shield-check" style={{ color: "#00ff7f" }}></i>
+                    <span>شواهد و اعتبار تشخیص</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="hud-action-btn secondary"
+                    onClick={() => setShowDebugInspector(true)}
+                    title="مشاهده لاگ‌های زنده، پارامترهای WebGPU، WebGL و WebAssembly"
+                  >
+                    <i className="bi bi-terminal" style={{ color: "#00d2d3" }}></i>
+                    <span>دیباگ و لاگ مهندسی</span>
+                  </button>
                   <button
                     type="button"
                     className="hud-action-btn secondary"
@@ -324,7 +371,7 @@ export default function SystemChecker({
                     title="انتخاب دستی یا تغییر قطعات برای تست سیستم‌های دیگر"
                   >
                     <i className="bi bi-sliders"></i>
-                    <span>تغییر یا انتخاب دقیق قطعات</span>
+                    <span>تغییر یا انتخاب دستی</span>
                   </button>
                   <button
                     type="button"
@@ -350,7 +397,23 @@ export default function SystemChecker({
                     <i className="bi bi-gpu-card"></i>
                   </div>
                   <div className="spec-details">
-                    <span className="spec-label">کارت گرافیک (GPU)</span>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span className="spec-label">کارت گرافیک (GPU)</span>
+                      {hardware.gpu.confidence && (
+                        <span
+                          style={{
+                            fontSize: "0.68rem",
+                            padding: "1px 6px",
+                            borderRadius: "4px",
+                            background: hardware.gpu.confidence >= 0.9 ? "rgba(0,255,127,0.15)" : "rgba(255,165,0,0.15)",
+                            color: hardware.gpu.confidence >= 0.9 ? "#00ff7f" : "#ffa502",
+                            border: `1px solid ${hardware.gpu.confidence >= 0.9 ? "rgba(0,255,127,0.3)" : "rgba(255,165,0,0.3)"}`,
+                          }}
+                        >
+                          اطمینان: {Math.round(hardware.gpu.confidence * 100)}%
+                        </span>
+                      )}
+                    </div>
                     <strong className="spec-value">{hardware.gpu.name}</strong>
                     <span className="spec-sub">
                       {hardware.gpu.vram} • {hardware.gpu.isDiscrete ? "کارت مجزا (Dedicated)" : "مجتمع (Integrated)"}
@@ -368,10 +431,26 @@ export default function SystemChecker({
                     <i className="bi bi-cpu"></i>
                   </div>
                   <div className="spec-details">
-                    <span className="spec-label">پردازنده مرکزی (CPU)</span>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span className="spec-label">پردازنده مرکزی (CPU)</span>
+                      {hardware.cpu.confidence && (
+                        <span
+                          style={{
+                            fontSize: "0.68rem",
+                            padding: "1px 6px",
+                            borderRadius: "4px",
+                            background: hardware.cpu.confidence >= 0.85 ? "rgba(0,210,211,0.15)" : "rgba(255,165,0,0.15)",
+                            color: hardware.cpu.confidence >= 0.85 ? "#00d2d3" : "#ffa502",
+                            border: `1px solid ${hardware.cpu.confidence >= 0.85 ? "rgba(0,210,211,0.3)" : "rgba(255,165,0,0.3)"}`,
+                          }}
+                        >
+                          اطمینان: {Math.round(hardware.cpu.confidence * 100)}%
+                        </span>
+                      )}
+                    </div>
                     <strong className="spec-value">{hardware.cpu.name}</strong>
                     <span className="spec-sub">
-                      {hardware.cpu.threads} رشته پردازشی • امتیاز بنچمارک: {hardware.benchmark.cpuScore}/100
+                      {hardware.cpu.threads} رشته پردازشی • بنچمارک: {hardware.benchmark.cpuScore}/100
                     </span>
                   </div>
                 </div>
@@ -386,10 +465,26 @@ export default function SystemChecker({
                     <i className="bi bi-memory"></i>
                   </div>
                   <div className="spec-details">
-                    <span className="spec-label">حافظه رم و سیستم‌عامل</span>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span className="spec-label">حافظه رم و سیستم‌عامل</span>
+                      {hardware.ram.estimatedClass && (
+                        <span
+                          style={{
+                            fontSize: "0.68rem",
+                            padding: "1px 6px",
+                            borderRadius: "4px",
+                            background: "rgba(168,85,247,0.15)",
+                            color: "#c084fc",
+                            border: "1px solid rgba(168,85,247,0.3)",
+                          }}
+                        >
+                          تست بافر: {hardware.ram.estimatedClass}
+                        </span>
+                      )}
+                    </div>
                     <strong className="spec-value">{hardware.ram.label}</strong>
                     <span className="spec-sub">
-                      {hardware.os.name} • سرعت: {hardware.benchmark.gflops} GFLOPS
+                      {hardware.os.name} • توان: {hardware.benchmark.gflops} GFLOPS
                     </span>
                   </div>
                 </div>
@@ -876,6 +971,322 @@ export default function SystemChecker({
                 >
                   <i className="bi bi-check2-circle"></i>
                   <span>اعمال و محاسبه مجدد فریم‌ریت</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 7. Scientific Evidence & Confidence Breakdown Modal */}
+        {showEvidenceModal && hardware && (
+          <div
+            className="sys-permission-modal-overlay"
+            onClick={() => setShowEvidenceModal(false)}
+          >
+            <div
+              className="sys-permission-modal-box"
+              style={{ maxWidth: "750px" }}
+              onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+            >
+              <div className="perm-header">
+                <div className="perm-icon" style={{ background: "rgba(0, 255, 127, 0.15)", color: "#00ff7f" }}>
+                  <i className="bi bi-shield-check"></i>
+                </div>
+                <div>
+                  <h3>شواهد و اعتبار علمی تشخیص (Evidence & Transparency)</h3>
+                  <span className="perm-subtitle">
+                    تفکیک داده‌های مشاهده مستقیم، استنتاج‌های فنی و تخمین‌های مبتنی بر بنچمارک
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className="perm-close-btn"
+                  onClick={() => setShowEvidenceModal(false)}
+                  aria-label="بستن"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="perm-body" style={{ maxHeight: "65vh", overflowY: "auto", padding: "1.5rem" }}>
+                {/* Confidence Summary Header */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "12px 16px",
+                    background: "rgba(0,0,0,0.35)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: "10px",
+                    marginBottom: "1.25rem",
+                  }}
+                >
+                  <div>
+                    <span style={{ fontSize: "0.85rem", color: "#a4b0be", display: "block" }}>
+                      سطح اعتبار کلی مدل فازی:
+                    </span>
+                    <strong style={{ fontSize: "1.1rem", color: "#00ff7f" }}>
+                      {hardware.detectionConfidence === "high" ? "بسیار بالا (قابل استناد)" : "استاندارد (مبتنی بر شواهد چندگانه)"}
+                    </strong>
+                  </div>
+                  <div style={{ textAlign: "left" }}>
+                    <span style={{ fontSize: "0.78rem", color: "#a4b0be", display: "block" }}>تعداد شواهد ثبت‌شده:</span>
+                    <strong style={{ fontSize: "1rem", color: "#fff" }}>
+                      {hardware.evidenceList ? hardware.evidenceList.length : 6} سیگنال سخت‌افزاری
+                    </strong>
+                  </div>
+                </div>
+
+                {/* Evidence Items List */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {hardware.evidenceList && hardware.evidenceList.length > 0 ? (
+                    hardware.evidenceList.map((ev, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          padding: "12px 14px",
+                          background: "rgba(255,255,255,0.03)",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                          borderRadius: "8px",
+                        }}
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                          <strong style={{ color: "#fff", fontSize: "0.9rem" }}>{ev.property}</strong>
+                          <span
+                            style={{
+                              fontSize: "0.72rem",
+                              padding: "2px 8px",
+                              borderRadius: "4px",
+                              background:
+                                ev.reliability === "direct"
+                                  ? "rgba(0,255,127,0.2)"
+                                  : ev.reliability === "strong"
+                                  ? "rgba(0,210,211,0.2)"
+                                  : "rgba(255,165,0,0.2)",
+                              color:
+                                ev.reliability === "direct"
+                                  ? "#00ff7f"
+                                  : ev.reliability === "strong"
+                                  ? "#00d2d3"
+                                  : "#ffa502",
+                              border: `1px solid ${
+                                ev.reliability === "direct"
+                                  ? "rgba(0,255,127,0.4)"
+                                  : ev.reliability === "strong"
+                                  ? "rgba(0,210,211,0.4)"
+                                  : "rgba(255,165,0,0.4)"
+                              }`,
+                            }}
+                          >
+                            {ev.reliability === "direct" && "مشاهده مستقیم"}
+                            {ev.reliability === "strong" && "استنتاج فنی قوی"}
+                            {ev.reliability === "estimated" && "تخمین مبتنی بر بنچمارک"}
+                            {ev.reliability === "weak" && "سیگنال ضعیف / احتمالی"}
+                          </span>
+                        </div>
+
+                        <div style={{ fontSize: "0.85rem", color: "#00ff7f", marginBottom: "4px" }}>
+                          مقدار کشف‌شده: <code>{String(ev.value)}</code>
+                        </div>
+
+                        <p style={{ margin: "0", fontSize: "0.8rem", color: "#a4b0be", lineHeight: "1.5" }}>
+                          {ev.description}
+                        </p>
+
+                        <div style={{ marginTop: "6px", display: "flex", alignItems: "center", gap: "8px", fontSize: "0.72rem", color: "#747d8c" }}>
+                          <span>منبع پروب: <strong>{ev.source.toUpperCase()}</strong></span>
+                          <span>•</span>
+                          <span>درجه اطمینان: <strong>{Math.round(ev.confidence * 100)}%</strong></span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p style={{ color: "#a4b0be", fontSize: "0.85rem" }}>
+                      شواهد به صورت لحظه‌ای در حال سنتز هستند.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="perm-footer">
+                <button
+                  type="button"
+                  className="perm-confirm-btn"
+                  onClick={() => setShowEvidenceModal(false)}
+                >
+                  <i className="bi bi-check-lg"></i>
+                  <span>بستن پنجره شواهد</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 8. Developer Debug Inspector Modal */}
+        {showDebugInspector && hardware && (
+          <div
+            className="sys-permission-modal-overlay"
+            onClick={() => setShowDebugInspector(false)}
+          >
+            <div
+              className="sys-permission-modal-box"
+              style={{ maxWidth: "800px" }}
+              onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+            >
+              <div className="perm-header">
+                <div className="perm-icon" style={{ background: "rgba(0, 210, 211, 0.15)", color: "#00d2d3" }}>
+                  <i className="bi bi-terminal"></i>
+                </div>
+                <div>
+                  <h3>دیباگر مهندسی و لاگ‌های کلاینت (Debug Inspector)</h3>
+                  <span className="perm-subtitle">
+                    مشاهده پارامترهای خام WebGPU، WebGL2، WebAssembly SIMD و MediaCapabilities
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className="perm-close-btn"
+                  onClick={() => setShowDebugInspector(false)}
+                  aria-label="بستن"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="perm-body" style={{ maxHeight: "65vh", overflowY: "auto", padding: "1.5rem" }}>
+                {/* Actions Row */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                  <span style={{ fontSize: "0.85rem", color: "#a4b0be" }}>
+                    گزارش کامل وضعیت تشخیصی کلاینت:
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleCopyReport}
+                    style={{
+                      padding: "6px 14px",
+                      background: copiedReport ? "rgba(0,255,127,0.3)" : "rgba(255,255,255,0.08)",
+                      border: copiedReport ? "1px solid #00ff7f" : "1px solid rgba(255,255,255,0.15)",
+                      borderRadius: "6px",
+                      color: "#fff",
+                      cursor: "pointer",
+                      fontSize: "0.8rem",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <i className={copiedReport ? "bi bi-check2" : "bi bi-clipboard"}></i>
+                    <span>{copiedReport ? "کپی شد!" : "کپی ساختار JSON گزارش"}</span>
+                  </button>
+                </div>
+
+                {/* Section 1: Live Scan Logs */}
+                <div style={{ marginBottom: "1.25rem" }}>
+                  <label style={{ display: "block", marginBottom: "6px", fontWeight: "700", color: "#00d2d3", fontSize: "0.85rem" }}>
+                    <i className="bi bi-code-square" style={{ marginLeft: "6px" }}></i>
+                    لاگ‌های زنده پروب تشخیصی:
+                  </label>
+                  <div
+                    style={{
+                      background: "rgba(0,0,0,0.6)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: "8px",
+                      padding: "10px 14px",
+                      fontFamily: "monospace",
+                      fontSize: "0.78rem",
+                      color: "#00ff7f",
+                      maxHeight: "130px",
+                      overflowY: "auto",
+                      direction: "ltr",
+                      textAlign: "left",
+                    }}
+                  >
+                    {hardware.debugLogs && hardware.debugLogs.length > 0 ? (
+                      hardware.debugLogs.map((log, i) => <div key={i}>{log}</div>)
+                    ) : (
+                      <div>Probe successfully completed.</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Section 2: Codec Matrix Table */}
+                {hardware.mediaMatrix && hardware.mediaMatrix.length > 0 && (
+                  <div style={{ marginBottom: "1.25rem" }}>
+                    <label style={{ display: "block", marginBottom: "6px", fontWeight: "700", color: "#00ff7f", fontSize: "0.85rem" }}>
+                      <i className="bi bi-film" style={{ marginLeft: "6px" }}></i>
+                      ماتریس رمزگشای ویدیویی سخت‌افزاری (MediaCapabilities):
+                    </label>
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                        gap: "8px",
+                      }}
+                    >
+                      {hardware.mediaMatrix.map((item, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            padding: "8px 10px",
+                            background: "rgba(0,0,0,0.3)",
+                            border: `1px solid ${item.supported ? "rgba(0,255,127,0.3)" : "rgba(255,255,255,0.1)"}`,
+                            borderRadius: "6px",
+                            fontSize: "0.75rem",
+                          }}
+                        >
+                          <div style={{ fontWeight: "700", color: item.supported ? "#00ff7f" : "#a4b0be" }}>
+                            {item.codec.toUpperCase()} ({item.profile})
+                          </div>
+                          <div style={{ color: "#747d8c", fontSize: "0.7rem" }}>{item.resolution} @ {item.fps}fps</div>
+                          <div style={{ marginTop: "4px", color: item.supported ? "#00d2d3" : "#ff4757" }}>
+                            {item.supported ? (item.powerEfficient ? "✓ شتاب‌دهنده سیلیکون" : "✓ پشتیبانی نرم‌افزاری") : "✗ پشتیبانی نمی‌شود"}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Section 3: WebGPU / WebGL Details */}
+                <div style={{ marginBottom: "1rem" }}>
+                  <label style={{ display: "block", marginBottom: "6px", fontWeight: "700", color: "#c084fc", fontSize: "0.85rem" }}>
+                    <i className="bi bi-gpu-card" style={{ marginLeft: "6px" }}></i>
+                    جزئیات آداپتور WebGPU / WebGL:
+                  </label>
+                  <div
+                    style={{
+                      background: "rgba(0,0,0,0.3)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: "8px",
+                      padding: "10px 12px",
+                      fontSize: "0.78rem",
+                      lineHeight: "1.6",
+                      color: "#c8d6e5",
+                    }}
+                  >
+                    <div>پشتیبانی از WebGPU: <strong>{hardware.webGpuDetails?.supported ? "فعال" : "غیرفعال یا محدود شده"}</strong></div>
+                    {hardware.webGpuDetails?.highPerfInfo && (
+                      <div>توصیف آداپتور قدرتمند: <code>{hardware.webGpuDetails.highPerfInfo.description || hardware.webGpuDetails.highPerfInfo.device}</code></div>
+                    )}
+                    <div>پیکربندی گرافیک دوگانه سوئیچ‌پذیر: <strong>{hardware.webGpuDetails?.hasDualAdapters ? "تشخیص داده شد (Optimus/Enduro)" : "تک پردازنده گرافیکی فعال"}</strong></div>
+                    <div>سقف بافر حافظه WebGPU: <strong>{hardware.webGpuDetails?.limits?.maxBufferSize ? `${Math.round(hardware.webGpuDetails.limits.maxBufferSize / (1024 * 1024))} مگابایت` : "استاندارد"}</strong></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="perm-footer">
+                <button
+                  type="button"
+                  className="perm-confirm-btn"
+                  onClick={() => setShowDebugInspector(false)}
+                >
+                  <i className="bi bi-check-lg"></i>
+                  <span>بستن دیباگر</span>
                 </button>
               </div>
             </div>

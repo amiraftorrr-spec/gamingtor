@@ -16,7 +16,13 @@ import {
   calculateAspectRatio,
   runWasmCpuBenchmark,
   synthesizeClientHardware,
+  detectClientHardwareScientific,
 } from "../src/lib/hardwareDetector.ts";
+import { parseRendererString } from "../src/lib/hardware/gpu/renderer-parser.ts";
+import { probeWebAssemblySimd } from "../src/lib/hardware/cpu/wasm-benchmark.ts";
+import { runMemoryAllocationProbe, estimateMemoryClass } from "../src/lib/hardware/memory/memory-probe.ts";
+import { determineFormFactor } from "../src/lib/hardware/device/form-factor.ts";
+import { EvidenceFusionEngine } from "../src/lib/hardware/fusion/evidence-engine.ts";
 import { evaluateGameForHardware } from "../src/lib/gameEvaluator.ts";
 import { GAMES } from "../src/data/games.ts";
 
@@ -297,5 +303,90 @@ describe("🎯 18-Game Performance & Compatibility Engine Tests", () => {
     const cpEval = evaluateGameForHardware(cp, hw);
     assert.strictEqual(cpEval.status, "heavy", "Cyberpunk should be 'heavy' on Intel UHD 630");
     assert.ok(cpEval.fpsNumber <= 40);
+  });
+});
+
+describe("🔬 Sub-Module Precision Tests", () => {
+  it("should accurately parse and normalize ANGLE and Mesa renderer strings", () => {
+    const angleParsed = parseRendererString(
+      "ANGLE (NVIDIA, NVIDIA GeForce RTX 3080 Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "Google Inc. (NVIDIA)"
+    );
+    assert.strictEqual(angleParsed.vendor, "NVIDIA");
+    assert.strictEqual(angleParsed.cleanName, "NVIDIA GeForce RTX 3080");
+    assert.strictEqual(angleParsed.isDiscrete, true);
+    assert.strictEqual(angleParsed.isAngleWrapper, true);
+
+    const mesaParsed = parseRendererString(
+      "Mesa Intel(R) UHD Graphics 620 (WHL GT2)",
+      "Intel Open Source Technology Center"
+    );
+    assert.strictEqual(mesaParsed.vendor, "Intel");
+    assert.strictEqual(mesaParsed.cleanName, "Intel UHD Graphics 620");
+    assert.strictEqual(mesaParsed.isDiscrete, false);
+    assert.strictEqual(mesaParsed.isMesaDriver, true);
+  });
+
+  it("should probe WebAssembly and SIMD capabilities cleanly", async () => {
+    const wasmStatus = await probeWebAssemblySimd();
+    assert.ok(typeof wasmStatus.wasmSupported === "boolean");
+    assert.ok(typeof wasmStatus.simdSupported === "boolean");
+    assert.strictEqual(wasmStatus.wasmSupported, true, "Node.js environment must support WASM");
+  });
+
+  it("should perform safe progressive memory probe without crashing", async () => {
+    const memResult = await runMemoryAllocationProbe(8);
+    assert.ok(memResult, "Memory probe must return a valid result");
+    assert.ok(memResult.maxAllocatedMb >= 0);
+    assert.ok(["<= 4 GB", "4 - 8 GB", "8 - 16 GB", "16 - 32 GB", "32 GB+"].includes(memResult.estimatedClass));
+
+    const estClass4 = estimateMemoryClass(4, 256);
+    assert.strictEqual(estClass4, "4 - 8 GB");
+
+    const estClass16 = estimateMemoryClass(8, 2048);
+    assert.strictEqual(estClass16, "16 - 32 GB");
+  });
+
+  it("should evaluate device form factor signals correctly", async () => {
+    const form = await determineFormFactor();
+    assert.ok(form, "Form factor analysis must succeed");
+    assert.ok(["laptop", "desktop", "unknown"].includes(form.type));
+    assert.ok(typeof form.confidence === "number" && form.confidence >= 0 && form.confidence <= 1);
+    assert.ok(Array.isArray(form.evidence));
+  });
+
+  it("should aggregate multi-signal evidence with EvidenceFusionEngine", () => {
+    const fusion = new EvidenceFusionEngine();
+    fusion.addLog("Initializing test fusion run");
+    fusion.recordDirect("gpu", "NVIDIA GeForce RTX 4070", 0.95, "WebGL WEBGL_debug_renderer_info");
+    fusion.recordStrongInference("vram", "12 GB GDDR6X", 0.9, "GPU Architecture Profile Database");
+    fusion.recordBenchmarkEstimate("cpu", "12 Threads (Score: 82)", 0.85, "WASM v128 arithmetic benchmark");
+
+    const evidence = fusion.getEvidenceList();
+    assert.strictEqual(evidence.length, 3);
+    assert.strictEqual(evidence[0].reliability, "direct");
+    assert.strictEqual(evidence[1].reliability, "strong");
+    assert.strictEqual(evidence[2].reliability, "estimated");
+
+    const overallConf = fusion.computeOverallConfidence();
+    assert.ok(overallConf >= 0.85 && overallConf <= 1.0);
+
+    const report = fusion.exportMasterReport({
+      gpu: { name: "NVIDIA GeForce RTX 4070", confidence: 0.95 },
+      cpu: { name: "Intel Core i5-13600K", confidence: 0.85 },
+      ram: { label: "16 گیگابایت", confidence: 0.8 },
+    });
+    assert.ok(report.timestamp);
+    assert.ok(report.evidence.length === 3);
+  });
+
+  it("should execute detectClientHardwareScientific in fallback/server environment without errors", async () => {
+    const hw = await detectClientHardwareScientific();
+    assert.ok(hw, "Hardware result must be returned");
+    assert.ok(hw.gpu.name.length > 0);
+    assert.ok(hw.cpu.name.length > 0);
+    assert.ok(hw.ram.totalGb > 0);
+    assert.ok(hw.evidenceList.length > 0);
+    assert.ok(hw.debugLogs.length > 0);
   });
 });
