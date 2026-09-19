@@ -127,6 +127,37 @@ describe("🎮 Hardware Database & Query Engine Tests", () => {
     assert.strictEqual(tglCpu.id, "i5-11400h");
     assert.strictEqual(tglCpu.name, "Intel Core i5-11400H");
     assert.strictEqual(tglCpu.threads, 12);
+
+    // AMD Ryzen Desktop Signature: Zen 4 / 16 threads -> Ryzen 7 7800X3D
+    const r7800Cpu = resolveBestCpu({
+      concurrency: 16,
+      rawRenderer: "AMD Radeon RX 7800 XT (RADV NAVI32)",
+      queryHint: "Zen 4",
+      isLaptop: false,
+    });
+    assert.ok(r7800Cpu, "Should resolve Ryzen Zen 4 Desktop CPU");
+    assert.strictEqual(r7800Cpu.vendor, "AMD");
+    assert.strictEqual(r7800Cpu.threads, 16);
+
+    // AMD Ryzen Laptop Signature: Phoenix / 780M -> Ryzen 7 7840HS
+    const r7840Cpu = resolveBestCpu({
+      concurrency: 16,
+      rawRenderer: "AMD Radeon 780M (Phoenix)",
+      isLaptop: true,
+    });
+    assert.ok(r7840Cpu, "Should resolve Ryzen 7 7840HS Laptop CPU");
+    assert.strictEqual(r7840Cpu.id, "ryzen-7-7840hs");
+    assert.strictEqual(r7840Cpu.isLaptop, true);
+
+    // Apple Silicon Signature: Apple M3 (16 threads / Max)
+    const m3MaxCpu = resolveBestCpu({
+      concurrency: 16,
+      rawRenderer: "Apple M3 Max GPU",
+      isLaptop: true,
+    });
+    assert.ok(m3MaxCpu, "Should resolve Apple M3 Max CPU");
+    assert.strictEqual(m3MaxCpu.id, "apple-m3-max-cpu");
+    assert.strictEqual(m3MaxCpu.vendor, "Apple");
   });
 });
 

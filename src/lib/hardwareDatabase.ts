@@ -790,14 +790,35 @@ export function resolveBestGpu(
     }
   }
 
-  // Global Fallback based on score and form factor
-  const globalCandidates = isLaptop !== undefined ? GPU_DATABASE.filter((g) => Boolean(g.isLaptop) === isLaptop) : GPU_DATABASE;
+  // Global Fallback based on score, vendor and form factor
+  let globalCandidates = GPU_DATABASE;
+  if (qLower.includes("amd") || qLower.includes("radeon") || qLower.includes("radv")) {
+    const amdOnly = GPU_DATABASE.filter((g) => g.vendor === "AMD");
+    if (amdOnly.length > 0) globalCandidates = amdOnly;
+  } else if (qLower.includes("intel") || qLower.includes("iris") || qLower.includes("arc") || qLower.includes("uhd")) {
+    const intelOnly = GPU_DATABASE.filter((g) => g.vendor === "Intel");
+    if (intelOnly.length > 0) globalCandidates = intelOnly;
+  } else if (qLower.includes("apple")) {
+    const appleOnly = GPU_DATABASE.filter((g) => g.vendor === "Apple");
+    if (appleOnly.length > 0) globalCandidates = appleOnly;
+  } else if (qLower.includes("nvidia") || qLower.includes("geforce")) {
+    const nvidiaOnly = GPU_DATABASE.filter((g) => g.vendor === "NVIDIA");
+    if (nvidiaOnly.length > 0) globalCandidates = nvidiaOnly;
+  }
+
+  if (isLaptop !== undefined) {
+    const formMatched = globalCandidates.filter((g) => Boolean(g.isLaptop) === isLaptop);
+    if (formMatched.length > 0) {
+      globalCandidates = formMatched;
+    }
+  }
+
   if (globalCandidates.length > 0) {
     globalCandidates.sort((a, b) => Math.abs(a.score - benchScore) - Math.abs(b.score - benchScore));
     return globalCandidates[0];
   }
 
-  return GPU_DATABASE.find((g) => g.id === "rtx-2050-laptop") || GPU_DATABASE[0];
+  return GPU_DATABASE.find((g) => g.id === "rtx-3060" || g.id === "rtx-2050-laptop") || GPU_DATABASE[0];
 }
 
 export function resolveBestCpu(
@@ -836,8 +857,187 @@ export function resolveBestCpu(
     if (match) return match;
   }
 
-  // Inspect rawRenderer for Intel / AMD CPU architecture codenames (e.g. Linux Mesa TGL GT1)
-  const renderer = (rawRenderer || queryHint || "").toUpperCase();
+  // Inspect rawRenderer and queryHint for architecture signatures and vendor clues
+  const renderer = `${rawRenderer || ""} ${queryHint || ""}`.trim().toUpperCase();
+
+  // ==========================================
+  // 1. APPLE SILICON ARCHITECTURE DECODING
+  // ==========================================
+  if (renderer.includes("APPLE") || renderer.includes("METAL") || renderer.includes("M1") || renderer.includes("M2") || renderer.includes("M3") || renderer.includes("M4")) {
+    if (renderer.includes("M4")) {
+      if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "apple-m4-max-cpu") || CPU_DATABASE[0];
+      if (concurrency >= 14) return CPU_DATABASE.find((c) => c.id === "apple-m4-pro-cpu") || CPU_DATABASE[0];
+      return CPU_DATABASE.find((c) => c.id === "apple-m4-cpu") || CPU_DATABASE[0];
+    }
+    if (renderer.includes("M3")) {
+      if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "apple-m3-max-cpu") || CPU_DATABASE[0];
+      if (concurrency >= 12) return CPU_DATABASE.find((c) => c.id === "apple-m3-pro-cpu") || CPU_DATABASE[0];
+      return CPU_DATABASE.find((c) => c.id === "apple-m3-cpu") || CPU_DATABASE[0];
+    }
+    if (renderer.includes("M2")) {
+      if (concurrency >= 24) return CPU_DATABASE.find((c) => c.id === "apple-m2-ultra-cpu") || CPU_DATABASE[0];
+      if (concurrency >= 12) return CPU_DATABASE.find((c) => c.id === "apple-m2-max-cpu" || c.id === "apple-m2-pro-cpu") || CPU_DATABASE[0];
+      return CPU_DATABASE.find((c) => c.id === "apple-m2-cpu") || CPU_DATABASE[0];
+    }
+    if (renderer.includes("M1")) {
+      if (concurrency >= 20) return CPU_DATABASE.find((c) => c.id === "apple-m1-ultra-cpu") || CPU_DATABASE[0];
+      if (concurrency >= 10) return CPU_DATABASE.find((c) => c.id === "apple-m1-max-cpu" || c.id === "apple-m1-pro-cpu") || CPU_DATABASE[0];
+      return CPU_DATABASE.find((c) => c.id === "apple-m1-cpu") || CPU_DATABASE[0];
+    }
+    const applePool = CPU_DATABASE.filter((c) => c.vendor === "Apple");
+    if (applePool.length > 0) {
+      applePool.sort((a, b) => Math.abs(a.cores - concurrency) - Math.abs(b.cores - concurrency));
+      return applePool[0];
+    }
+  }
+
+  // ==========================================
+  // 2. AMD RYZEN ARCHITECTURE DECODING
+  // ==========================================
+  const isAmdClue =
+    renderer.includes("AMD") ||
+    renderer.includes("RYZEN") ||
+    renderer.includes("RADEON") ||
+    renderer.includes("RADV") ||
+    renderer.includes("RENOIR") ||
+    renderer.includes("CEZANNE") ||
+    renderer.includes("REMBRANDT") ||
+    renderer.includes("PHOENIX") ||
+    renderer.includes("RAPHAEL") ||
+    renderer.includes("VERMEER") ||
+    renderer.includes("MATISSE") ||
+    renderer.includes("ZEN");
+
+  if (isAmdClue) {
+    // Zen 5 (Ryzen 9000 Series)
+    if (renderer.includes("ZEN 5") || renderer.includes("ZEN5") || renderer.includes("GRANITE")) {
+      if (concurrency >= 32) return CPU_DATABASE.find((c) => c.id === "ryzen-9-9950x") || CPU_DATABASE[0];
+      if (concurrency >= 24) return CPU_DATABASE.find((c) => c.id === "ryzen-9-9900x") || CPU_DATABASE[0];
+      if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "ryzen-7-9700x") || CPU_DATABASE[0];
+      return CPU_DATABASE.find((c) => c.id === "ryzen-5-9600x") || CPU_DATABASE[0];
+    }
+
+    // Zen 4 (Ryzen 7000 / 8000 Series, Phoenix, Raphael)
+    if (
+      renderer.includes("ZEN 4") ||
+      renderer.includes("ZEN4") ||
+      renderer.includes("PHOENIX") ||
+      renderer.includes("RAPHAEL") ||
+      renderer.includes("780M") ||
+      renderer.includes("760M") ||
+      renderer.includes("7945") ||
+      renderer.includes("7840") ||
+      renderer.includes("7640")
+    ) {
+      if (isLaptop || isLaptop === undefined) {
+        if (concurrency >= 32) return CPU_DATABASE.find((c) => c.id === "ryzen-9-7945hx") || CPU_DATABASE[0];
+        if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "ryzen-7-7840hs") || CPU_DATABASE[0];
+        if (concurrency >= 12) return CPU_DATABASE.find((c) => c.id === "ryzen-5-7640hs") || CPU_DATABASE[0];
+      }
+      if (concurrency >= 32) return CPU_DATABASE.find((c) => c.id === "ryzen-9-7950x3d" || c.id === "ryzen-9-7950x") || CPU_DATABASE[0];
+      if (concurrency >= 24) return CPU_DATABASE.find((c) => c.id === "ryzen-9-7900x3d" || c.id === "ryzen-9-7900x") || CPU_DATABASE[0];
+      if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "ryzen-7-7800x3d" || c.id === "ryzen-7-7700x") || CPU_DATABASE[0];
+      return CPU_DATABASE.find((c) => c.id === "ryzen-5-7600x" || c.id === "ryzen-5-7500f") || CPU_DATABASE[0];
+    }
+
+    // Zen 3+ / Zen 3 (Ryzen 6000 / 5000 Series, Rembrandt, Cezanne, Vermeer)
+    if (
+      renderer.includes("ZEN 3") ||
+      renderer.includes("ZEN3") ||
+      renderer.includes("REMBRANDT") ||
+      renderer.includes("CEZANNE") ||
+      renderer.includes("VERMEER") ||
+      renderer.includes("BARCELO") ||
+      renderer.includes("680M") ||
+      renderer.includes("660M") ||
+      renderer.includes("5800") ||
+      renderer.includes("5600")
+    ) {
+      if (isLaptop || isLaptop === undefined) {
+        if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "ryzen-7-6800h" || c.id === "ryzen-7-5800h" || c.id === "ryzen-7-7735hs") || CPU_DATABASE[0];
+        if (concurrency >= 12) return CPU_DATABASE.find((c) => c.id === "ryzen-5-6600h" || c.id === "ryzen-5-5600h" || c.id === "ryzen-5-7535hs") || CPU_DATABASE[0];
+        return CPU_DATABASE.find((c) => c.id === "ryzen-5-5500u" || c.id === "ryzen-3-5300u") || CPU_DATABASE[0];
+      }
+      if (concurrency >= 32) return CPU_DATABASE.find((c) => c.id === "ryzen-9-5950x") || CPU_DATABASE[0];
+      if (concurrency >= 24) return CPU_DATABASE.find((c) => c.id === "ryzen-9-5900x") || CPU_DATABASE[0];
+      if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "ryzen-7-5800x3d" || c.id === "ryzen-7-5800x" || c.id === "ryzen-7-5700x") || CPU_DATABASE[0];
+      if (concurrency >= 12) return CPU_DATABASE.find((c) => c.id === "ryzen-5-5600x" || c.id === "ryzen-5-5600" || c.id === "ryzen-5-5600g") || CPU_DATABASE[0];
+      return CPU_DATABASE.find((c) => c.id === "ryzen-5-5500" || c.id === "ryzen-3-5300g") || CPU_DATABASE[0];
+    }
+
+    // Zen 2 / Zen+ (Ryzen 3000 / 4000 Mobile / 2000 Series, Matisse, Renoir)
+    if (
+      renderer.includes("ZEN 2") ||
+      renderer.includes("ZEN2") ||
+      renderer.includes("RENOIR") ||
+      renderer.includes("MATISSE") ||
+      renderer.includes("4800") ||
+      renderer.includes("4600") ||
+      renderer.includes("3700") ||
+      renderer.includes("3600")
+    ) {
+      if (isLaptop || isLaptop === undefined) {
+        if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "ryzen-7-4800h") || CPU_DATABASE[0];
+        if (concurrency >= 12) return CPU_DATABASE.find((c) => c.id === "ryzen-5-4600h") || CPU_DATABASE[0];
+      }
+      if (concurrency >= 32) return CPU_DATABASE.find((c) => c.id === "ryzen-9-3950x") || CPU_DATABASE[0];
+      if (concurrency >= 24) return CPU_DATABASE.find((c) => c.id === "ryzen-9-3900x") || CPU_DATABASE[0];
+      if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "ryzen-7-3800x" || c.id === "ryzen-7-3700x") || CPU_DATABASE[0];
+      if (concurrency >= 12) return CPU_DATABASE.find((c) => c.id === "ryzen-5-3600x" || c.id === "ryzen-5-3600") || CPU_DATABASE[0];
+      return CPU_DATABASE.find((c) => c.id === "ryzen-3-3300x" || c.id === "ryzen-3-3100") || CPU_DATABASE[0];
+    }
+
+    // General AMD pool matching: prioritize exact or closest thread count
+    const amdPool = CPU_DATABASE.filter((c) => c.vendor === "AMD");
+    const amdFormMatched = isLaptop !== undefined ? amdPool.filter((c) => Boolean(c.isLaptop) === isLaptop) : amdPool;
+    const finalAmdList = amdFormMatched.length > 0 ? amdFormMatched : amdPool;
+
+    const exactThreadMatches = finalAmdList.filter((c) => c.threads === concurrency);
+    if (exactThreadMatches.length > 0) {
+      exactThreadMatches.sort((a, b) => Math.abs(a.score - cpuScore) - Math.abs(b.score - cpuScore));
+      return exactThreadMatches[0];
+    }
+
+    const amdCandidates = finalAmdList.filter(
+      (c) => Math.abs(c.threads - concurrency) <= 4 || Math.abs(c.cores - concurrency) <= 2
+    );
+
+    if (amdCandidates.length > 0) {
+      amdCandidates.sort((a, b) => {
+        const threadDiff = Math.abs(a.threads - concurrency) - Math.abs(b.threads - concurrency);
+        if (threadDiff !== 0) return threadDiff;
+        return Math.abs(a.score - cpuScore) - Math.abs(b.score - cpuScore);
+      });
+      return amdCandidates[0];
+    }
+
+    finalAmdList.sort((a, b) => Math.abs(a.score - cpuScore) - Math.abs(b.score - cpuScore));
+    return finalAmdList[0];
+  }
+
+  // ==========================================
+  // 3. INTEL CORE ARCHITECTURE DECODING
+  // ==========================================
+
+  // Meteor Lake / Lunar Lake / Arrow Lake (Core Ultra Series)
+  if (
+    renderer.includes("METEOR LAKE") ||
+    renderer.includes("METEORLAKE") ||
+    renderer.includes("LUNAR LAKE") ||
+    renderer.includes("ARROW LAKE") ||
+    renderer.includes("CORE ULTRA") ||
+    renderer.includes("140V") ||
+    renderer.includes("130V")
+  ) {
+    if (isLaptop || isLaptop === undefined) {
+      if (concurrency >= 22) return CPU_DATABASE.find((c) => c.id === "core-ultra-9-185h") || CPU_DATABASE[0];
+      if (concurrency >= 16) return CPU_DATABASE.find((c) => c.id === "core-ultra-7-155h") || CPU_DATABASE[0];
+      return CPU_DATABASE.find((c) => c.id === "core-ultra-5-125h") || CPU_DATABASE[0];
+    }
+    if (concurrency >= 24) return CPU_DATABASE.find((c) => c.id === "core-ultra-9-285k") || CPU_DATABASE[0];
+    if (concurrency >= 20) return CPU_DATABASE.find((c) => c.id === "core-ultra-7-265k") || CPU_DATABASE[0];
+    return CPU_DATABASE.find((c) => c.id === "core-ultra-5-245k") || CPU_DATABASE[0];
+  }
 
   // Tiger Lake (11th Gen Intel, e.g. TGL GT1 / TGL GT2 - 100% Mobile Silicon)
   if (renderer.includes("TGL") || renderer.includes("TIGER LAKE") || renderer.includes("TIGERLAKE")) {
@@ -856,42 +1056,93 @@ export function resolveBestCpu(
   // Alder Lake (12th Gen Intel, e.g. ADL)
   if (renderer.includes("ADL") || renderer.includes("ALDER LAKE") || renderer.includes("ALDERLAKE")) {
     if (isLaptop || isLaptop === undefined || renderer.includes("ADL-P") || renderer.includes("ADL-M")) {
+      if (concurrency >= 20) {
+        const adl20 = CPU_DATABASE.find((c) => c.id === "i7-12700h");
+        if (adl20) return adl20;
+      }
       if (concurrency >= 16) {
-        const adl16 = CPU_DATABASE.find((c) => c.id === "i7-12700h" || c.id === "i5-12500h");
+        const adl16 = CPU_DATABASE.find((c) => c.id === "i5-12500h");
         if (adl16) return adl16;
       }
       const adlMobile = CPU_DATABASE.find((c) => c.id === "i5-12500h" || c.id === "i5-12450h");
       if (adlMobile) return adlMobile;
     }
-    const adlDesktop = CPU_DATABASE.find((c) => c.id === "i5-12400f");
-    if (adlDesktop) return adlDesktop;
+    if (concurrency >= 20) {
+      const adl20D = CPU_DATABASE.find((c) => c.id === "i7-12700k");
+      if (adl20D) return adl20D;
+    }
+    if (concurrency >= 12) {
+      const adlDesktop = CPU_DATABASE.find((c) => c.id === "i5-12400f" || c.id === "i5-12400");
+      if (adlDesktop) return adlDesktop;
+    }
+    const adl3 = CPU_DATABASE.find((c) => c.id === "i3-12100f");
+    if (adl3) return adl3;
   }
 
   // Raptor Lake (13th/14th Gen Intel, e.g. RPL)
   if (renderer.includes("RPL") || renderer.includes("RAPTOR LAKE") || renderer.includes("RAPTORLAKE")) {
     if (isLaptop || isLaptop === undefined) {
+      if (concurrency >= 24) {
+        const rpl24 = CPU_DATABASE.find((c) => c.id === "i9-14900hx" || c.id === "i9-13980hx");
+        if (rpl24) return rpl24;
+      }
+      if (concurrency >= 20) {
+        const rpl20 = CPU_DATABASE.find((c) => c.id === "i7-13700hx" || c.id === "i7-13700h");
+        if (rpl20) return rpl20;
+      }
       if (concurrency >= 16) {
-        const rpl16 = CPU_DATABASE.find((c) => c.id === "i7-13700hx" || c.id === "i7-13650hx" || c.id === "i5-13500h");
+        const rpl16 = CPU_DATABASE.find((c) => c.id === "i5-13500h" || c.id === "i7-13650hx");
         if (rpl16) return rpl16;
       }
       const rplMobile = CPU_DATABASE.find((c) => c.id === "i5-13500h" || c.id === "i5-13420h");
       if (rplMobile) return rplMobile;
     }
+    if (concurrency >= 32) {
+      const rpl32 = CPU_DATABASE.find((c) => c.id === "i9-14900k" || c.id === "i9-13900k");
+      if (rpl32) return rpl32;
+    }
+    if (concurrency >= 24 || concurrency >= 20) {
+      const rpl24 = CPU_DATABASE.find((c) => c.id === "i7-14700k" || c.id === "i7-13700k");
+      if (rpl24) return rpl24;
+    }
+    if (concurrency >= 16) {
+      const rpl16 = CPU_DATABASE.find((c) => c.id === "i5-14600k" || c.id === "i5-13600k" || c.id === "i5-13400f");
+      if (rpl16) return rpl16;
+    }
     const rplDesktop = CPU_DATABASE.find((c) => c.id === "i5-13400f");
     if (rplDesktop) return rplDesktop;
   }
 
-  // Coffee Lake (8th / 9th Gen Intel, e.g. CFL)
-  if (renderer.includes("CFL") || renderer.includes("COFFEE LAKE") || renderer.includes("COFFEELAKE")) {
+  // Coffee Lake / Comet Lake (8th / 9th / 10th Gen Intel, e.g. CFL)
+  if (
+    renderer.includes("CFL") ||
+    renderer.includes("COFFEE LAKE") ||
+    renderer.includes("COFFEELAKE") ||
+    renderer.includes("COMET LAKE") ||
+    renderer.includes("COMETLAKE") ||
+    renderer.includes("UHD 630")
+  ) {
     if (isLaptop || isLaptop === undefined) {
       if (concurrency >= 12) {
-        const cfl12 = CPU_DATABASE.find((c) => c.id === "i7-9750h" || c.id === "i7-8750h");
+        const cfl12 = CPU_DATABASE.find((c) => c.id === "i7-10750h" || c.id === "i7-9750h" || c.id === "i7-8750h");
         if (cfl12) return cfl12;
       }
-      const cflMobile = CPU_DATABASE.find((c) => c.id === "i5-9300h");
+      const cflMobile = CPU_DATABASE.find((c) => c.id === "i5-10300h" || c.id === "i5-9300h");
       if (cflMobile) return cflMobile;
     }
-    const cflDesktop = CPU_DATABASE.find((c) => c.id === "i5-9400f" || c.id === "i7-8700k");
+    if (concurrency >= 20) {
+      const cfl20 = CPU_DATABASE.find((c) => c.id === "i9-10900k");
+      if (cfl20) return cfl20;
+    }
+    if (concurrency >= 16) {
+      const cfl16 = CPU_DATABASE.find((c) => c.id === "i7-10700k" || c.id === "i9-9900k");
+      if (cfl16) return cfl16;
+    }
+    if (concurrency >= 12) {
+      const cfl12 = CPU_DATABASE.find((c) => c.id === "i5-10400f" || c.id === "i7-8700k");
+      if (cfl12) return cfl12;
+    }
+    const cflDesktop = CPU_DATABASE.find((c) => c.id === "i5-9400f" || c.id === "i3-10100");
     if (cflDesktop) return cflDesktop;
   }
 
@@ -901,7 +1152,7 @@ export function resolveBestCpu(
       const kblMobile = CPU_DATABASE.find((c) => c.id === "i7-7700hq");
       if (kblMobile) return kblMobile;
     }
-    const kblDesktop = CPU_DATABASE.find((c) => c.id === "i7-7700k");
+    const kblDesktop = CPU_DATABASE.find((c) => c.id === "i7-7700k" || c.id === "i5-7500");
     if (kblDesktop) return kblDesktop;
   }
 
@@ -911,14 +1162,21 @@ export function resolveBestCpu(
       const sklMobile = CPU_DATABASE.find((c) => c.id === "i7-6700hq");
       if (sklMobile) return sklMobile;
     }
-    const sklDesktop = CPU_DATABASE.find((c) => c.id === "i7-6700k");
+    const sklDesktop = CPU_DATABASE.find((c) => c.id === "i7-6700k" || c.id === "i5-6500");
     if (sklDesktop) return sklDesktop;
   }
 
-  // Filter candidates by form factor (Laptop vs Desktop)
+  // ==========================================
+  // 4. GENERAL VENDOR-AWARE FALLBACK
+  // ==========================================
   let pool = CPU_DATABASE;
+  if (renderer.includes("INTEL")) {
+    const intelOnly = CPU_DATABASE.filter((c) => c.vendor === "Intel");
+    if (intelOnly.length > 0) pool = intelOnly;
+  }
+
   if (isLaptop !== undefined) {
-    const formMatched = CPU_DATABASE.filter((c) => Boolean(c.isLaptop) === isLaptop);
+    const formMatched = pool.filter((c) => Boolean(c.isLaptop) === isLaptop);
     if (formMatched.length > 0) {
       pool = formMatched;
     }

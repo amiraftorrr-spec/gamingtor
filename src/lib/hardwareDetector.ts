@@ -43,6 +43,7 @@ export interface DeviceFormFactor {
 
 export interface SynthesizedHardware {
   gpu: {
+    id?: string;
     name: string;
     vendor: string;
     vram: string;
@@ -54,6 +55,7 @@ export interface SynthesizedHardware {
     secondaryGpu?: string;
   };
   cpu: {
+    id?: string;
     name: string;
     vendor: string;
     cores: number;
@@ -828,13 +830,32 @@ export async function detectDeviceFormFactor(
 
   if (typeof navigator !== "undefined" && "getBattery" in navigator) {
     try {
-      const getBattery = (navigator as unknown as { getBattery?: () => Promise<{ charging: boolean; level: number }> }).getBattery;
+      const getBattery = (
+        navigator as unknown as {
+          getBattery?: () => Promise<{
+            charging: boolean;
+            level: number;
+            chargingTime?: number;
+            dischargingTime?: number;
+          }>;
+        }
+      ).getBattery;
       if (getBattery) {
         const battery = await getBattery();
         if (battery && typeof battery.charging === "boolean") {
-          batteryFound = true;
-          hasBattery = true;
-          isCharging = battery.charging;
+          // In Chromium on Linux/Windows desktops, getBattery() sometimes returns level=1, charging=true, chargingTime=0, dischargingTime=Infinity
+          // On actual laptops: battery.level < 1.0 or dischargingTime < Infinity or chargingTime > 0 or charging === false
+          const isRealBattery =
+            battery.level < 1.0 ||
+            battery.charging === false ||
+            (typeof battery.dischargingTime === "number" && battery.dischargingTime !== Infinity && !isNaN(battery.dischargingTime)) ||
+            (typeof battery.chargingTime === "number" && battery.chargingTime > 0 && battery.chargingTime !== Infinity);
+
+          if (isRealBattery) {
+            batteryFound = true;
+            hasBattery = true;
+            isCharging = battery.charging;
+          }
         }
       }
     } catch {}
@@ -848,42 +869,59 @@ export async function detectDeviceFormFactor(
 
   // Mobile silicon architecture keywords present in Mesa/DirectX/WebGL
   const isMobileSilicon =
+    rLower.includes("laptop gpu") ||
+    rLower.includes("mobile") ||
+    rLower.includes("max-q") ||
     rLower.includes("tgl") ||
     rLower.includes("tiger lake") ||
     rLower.includes("tigerlake") ||
     rLower.includes("iris xe") ||
     rLower.includes("iris(r) xe") ||
     rLower.includes("iris plus") ||
-    rLower.includes("laptop gpu") ||
-    rLower.includes("mobile") ||
-    rLower.includes("max-q") ||
     rLower.includes("radeon 680m") ||
     rLower.includes("radeon 780m") ||
     rLower.includes("radeon 890m") ||
     rLower.includes("adl-p") ||
     rLower.includes("rpl-p") ||
-    rLower.includes("meteor lake");
+    rLower.includes("meteor lake") ||
+    rLower.includes("lunar lake") ||
+    rLower.includes("apple m") ||
+    /\b(ga107m|ga106m|ad107m|ad106m|tu117m)\b/i.test(rLower);
 
-  const isOptimusDualGpu = dualGpuDetected;
-  const isLaptopResolution =
-    (screenW <= 1920 && screenH <= 1200) ||
+  // Explicit desktop silicon keywords
+  const isDesktopSilicon =
+    rLower.includes("pcie") ||
+    rLower.includes("desktop") ||
+    rLower.includes("super") ||
+    (rLower.includes("ti") && !rLower.includes("laptop") && !rLower.includes("mobile"));
+
+  // Typical laptop DPI & Resolution indicators (Laptops with 1080p/1440p screens almost always use 125% - 200% scale)
+  const isLaptopDisplay =
+    (dpr >= 1.25 && screenW <= 2560 && screenH <= 1600) ||
     screenW === 1536 ||
     screenW === 1600 ||
-    screenW === 1440 ||
-    screenW === 1366;
+    screenW === 1366 ||
+    (touchPoints > 0 && screenW <= 1920);
 
   let isLaptop = false;
-  let confidence: "high" | "medium" | "low" = "low";
+  let confidence: "high" | "medium" | "low" = "medium";
 
-  if (batteryFound || isOptimusDualGpu || isMobileSilicon) {
+  if (isMobileSilicon) {
     isLaptop = true;
     confidence = "high";
-  } else if (isLaptopResolution || touchPoints > 0) {
+  } else if (isDesktopSilicon && !batteryFound) {
+    isLaptop = false;
+    confidence = "high";
+  } else if (batteryFound || dualGpuDetected) {
+    isLaptop = true;
+    confidence = "high";
+  } else if (isLaptopDisplay) {
     isLaptop = true;
     confidence = "medium";
   } else {
-    isLaptop = dpr > 1.1 && screenW < 2560;
-    confidence = "low";
+    // Standard 1080p / 1440p / 4K with DPR=1.0 and no battery is a Desktop
+    isLaptop = false;
+    confidence = "medium";
   }
 
   return {
@@ -891,7 +929,7 @@ export async function detectDeviceFormFactor(
     confidence,
     hasBattery,
     isCharging,
-    isOptimusDualGpu,
+    isOptimusDualGpu: dualGpuDetected,
     dpr,
   };
 }
@@ -916,7 +954,7 @@ export async function synthesizeClientHardware(customOverrides?: {
     (detectGpu.gpu && webGl.highPerfRenderer && !detectGpu.gpu.toLowerCase().includes(webGl.highPerfRenderer.toLowerCase()))
   );
 
-  const rawRendererCandidates = `${webGl.highPerfRenderer || ""} ${webGl.lowPowerRenderer || ""} ${detectGpu.gpu || ""} ${webGpu.description || ""}`;
+  const rawRendererCandidates = `${webGl.highPerfRenderer || ""} ${webGl.lowPowerRenderer || ""} ${detectGpu.gpu || ""} ${webGpu.description || ""} ${webGpu.highPerfGpu || ""}`;
 
   // 2. Parallel probing of display, codecs, benchmarks, and form factor
   const [codecs, display, wasmBench, gpuFps, calibratedGpu, formFactor] = await Promise.all([
@@ -943,12 +981,16 @@ export async function synthesizeClientHardware(customOverrides?: {
 
   if (!detectedGpuSpec) {
     const candidateStrings = [
-      detectGpu.gpu || "",
-      webGl.highPerfRenderer,
-      webGpu.description || "",
       webGpu.highPerfGpu || "",
-      webGl.highPerfVendor,
+      webGl.highPerfRenderer || "",
+      detectGpu.gpu || "",
+      webGpu.description || "",
+      webGl.lowPowerRenderer || "",
+      webGl.highPerfVendor || "",
     ].filter(Boolean);
+
+    let discreteGpu: GpuSpec | null = null;
+    let integratedGpu: GpuSpec | null = null;
 
     for (const str of candidateStrings) {
       const match = findGpuByQuery(str, {
@@ -956,8 +998,37 @@ export async function synthesizeClientHardware(customOverrides?: {
         benchScore: calibratedGpu.gpuScore,
       });
       if (match) {
-        detectedGpuSpec = match;
-        break;
+        if (match.isDiscrete) {
+          if (!discreteGpu) discreteGpu = match;
+        } else {
+          if (!integratedGpu) integratedGpu = match;
+        }
+      }
+    }
+
+    if (discreteGpu) {
+      detectedGpuSpec = discreteGpu;
+      if (integratedGpu && integratedGpu.id !== discreteGpu.id) {
+        secondaryGpuName = `${integratedGpu.name} (گرافیک مجتمع نمایشگر)`;
+      }
+    } else if (integratedGpu) {
+      // Check if discrete silicon codename / PCI ID is present in raw renderer strings (e.g. GA107, 25ad)
+      const rLowerAll = rawRendererCandidates.toLowerCase();
+      const hasDiscreteChipCodename =
+        /\b(ga107|ga106|ad107|ad106|tu117|tu116|navi|alchemist)\b/i.test(rLowerAll) ||
+        /\b(25ad|25a2|2560|2520)\b/i.test(rLowerAll);
+
+      if (hasDiscreteChipCodename) {
+        const dgpuMatch = findGpuByQuery(rLowerAll, { isLaptop, benchScore: calibratedGpu.gpuScore });
+        if (dgpuMatch && dgpuMatch.isDiscrete) {
+          detectedGpuSpec = dgpuMatch;
+          secondaryGpuName = `${integratedGpu.name} (گرافیک مجتمع نمایشگر)`;
+        } else {
+          detectedGpuSpec = integratedGpu;
+        }
+      } else {
+        // Truly an integrated GPU (Intel Iris Xe, AMD Radeon 780M, Intel UHD 770, etc.)
+        detectedGpuSpec = integratedGpu;
       }
     }
   }
@@ -966,32 +1037,12 @@ export async function synthesizeClientHardware(customOverrides?: {
   if (!detectedGpuSpec) {
     const primaryStr = detectGpu.gpu || webGl.highPerfRenderer || webGpu.description || webGpu.highPerfGpu || "";
     detectedGpuSpec = resolveBestGpu({
-      rawRenderer: primaryStr,
+      rawRenderer: primaryStr || rawRendererCandidates,
       query: primaryStr,
       isLaptop,
       benchScore: calibratedGpu.gpuScore,
       arch: webGpu.architecture,
     });
-  }
-
-  // Handle Hybrid / Optimus Switchable Gaming Laptops:
-  // If the detected GPU from WebGL/browser is integrated (e.g. Intel UHD / Iris Xe / AMD Radeon Vega)
-  // BUT the device is a laptop with multi-core gaming capability (e.g. 12 threads Tiger Lake, >=16GB RAM, or high compute score),
-  // recognize the discrete gaming GPU (NVIDIA GeForce RTX 2050 Mobile 4GB) for gaming compatibility,
-  // and preserve the integrated GPU as the display/browser renderer.
-  const rLowerAll = rawRendererCandidates.toLowerCase();
-  const isTigerLake = rLowerAll.includes("tgl") || rLowerAll.includes("tiger lake") || rLowerAll.includes("tigerlake");
-  const isAlderLake = rLowerAll.includes("adl") || rLowerAll.includes("alder lake");
-  const isRaptorLake = rLowerAll.includes("rpl") || rLowerAll.includes("raptor lake");
-
-  if (!customOverrides?.gpuId && detectedGpuSpec && !detectedGpuSpec.isDiscrete) {
-    if (isLaptop || isTigerLake || isAlderLake || isRaptorLake || cores >= 12 || wasmBench.cpuScore >= 55) {
-      secondaryGpuName = `${detectedGpuSpec.name} (گرافیک مجتمع نمایشگر)`;
-      const dgpuMatch = GPU_DATABASE.find((g) => g.id === "rtx-2050-laptop" || g.id === "rtx-2050");
-      if (dgpuMatch) {
-        detectedGpuSpec = dgpuMatch;
-      }
-    }
   }
 
   // Secondary GPU check (e.g. Intel Iris Xe / UHD alongside NVIDIA RTX Mobile)
@@ -1011,7 +1062,7 @@ export async function synthesizeClientHardware(customOverrides?: {
   }
 
   if (!detectedCpuSpec) {
-    const rawRenderer = webGl.highPerfRenderer || detectGpu.gpu || "";
+    const rawRenderer = webGl.highPerfRenderer || detectGpu.gpu || rawRendererCandidates;
     detectedCpuSpec = resolveBestCpu({
       concurrency: cores,
       cpuScore: wasmBench.cpuScore,
@@ -1020,9 +1071,36 @@ export async function synthesizeClientHardware(customOverrides?: {
     });
   }
 
-  // Estimate RAM
-  let ramGb = customOverrides?.ramGb || (rawRam >= 8 ? (cores >= 12 ? 16 : 8) : 8);
-  let isEstimatedRam = !customOverrides?.ramGb;
+  // Dynamic fallback spec guarantee
+  const fallbackGpu = resolveBestGpu({
+    rawRenderer: rawRendererCandidates,
+    isLaptop: formFactor.isLaptop,
+    benchScore: calibratedGpu.gpuScore,
+  });
+  const finalGpuSpec = detectedGpuSpec || fallbackGpu;
+
+  const fallbackCpu = resolveBestCpu({
+    concurrency: cores,
+    cpuScore: wasmBench.cpuScore,
+    rawRenderer: rawRendererCandidates,
+    isLaptop: formFactor.isLaptop,
+  });
+  const finalCpuSpec = detectedCpuSpec || fallbackCpu;
+
+  // Estimate RAM intelligently
+  let ramGb = customOverrides?.ramGb;
+  let isEstimatedRam = false;
+
+  if (!ramGb) {
+    if (finalGpuSpec.score >= 85 || finalCpuSpec.threads >= 16) {
+      ramGb = 32;
+    } else if (finalGpuSpec.score >= 50 || finalCpuSpec.threads >= 12 || rawRam >= 8) {
+      ramGb = 16;
+    } else {
+      ramGb = 8;
+    }
+    isEstimatedRam = true;
+  }
 
   // OS Info
   let osName = "Windows 11 / 10 64-Bit";
@@ -1034,8 +1112,8 @@ export async function synthesizeClientHardware(customOverrides?: {
   }
 
   // Calculate overall performance tier and gaming score
-  const gpuScore = detectedGpuSpec?.score || calibratedGpu.gpuScore || 50;
-  const cpuScore = detectedCpuSpec?.score || wasmBench.cpuScore || 60;
+  const gpuScore = finalGpuSpec.score || calibratedGpu.gpuScore || 50;
+  const cpuScore = finalCpuSpec.score || wasmBench.cpuScore || 60;
   const ramScore = Math.min(ramGb * 5, 100);
   const benchOverall = Math.round(gpuScore * 0.6 + cpuScore * 0.3 + (wasmBench.cpuScore / 100) * 10);
 
@@ -1064,27 +1142,27 @@ export async function synthesizeClientHardware(customOverrides?: {
 
   return {
     gpu: {
-      name: detectedGpuSpec?.name || (formFactor.isLaptop ? "NVIDIA GeForce RTX 2050 Laptop GPU" : "NVIDIA GeForce RTX 2050"),
-      vendor: detectedGpuSpec?.vendor || "NVIDIA",
-      vram: detectedGpuSpec?.vram || "4 GB GDDR6",
-      vramGb: detectedGpuSpec?.vramGb || 4,
-      tier: detectedGpuSpec?.tier || "B",
-      architecture: detectedGpuSpec?.architecture,
-      isDiscrete:
-        detectedGpuSpec?.isDiscrete ??
-        (detectedGpuSpec?.vendor === "NVIDIA" || (detectedGpuSpec?.vendor === "AMD" && !detectedGpuSpec.name.includes("Vega"))),
-      isLaptop: detectedGpuSpec?.isLaptop ?? formFactor.isLaptop,
+      id: finalGpuSpec.id,
+      name: finalGpuSpec.name,
+      vendor: finalGpuSpec.vendor,
+      vram: finalGpuSpec.vram,
+      vramGb: finalGpuSpec.vramGb,
+      tier: finalGpuSpec.tier,
+      architecture: finalGpuSpec.architecture,
+      isDiscrete: finalGpuSpec.isDiscrete,
+      isLaptop: finalGpuSpec.isLaptop ?? formFactor.isLaptop,
       secondaryGpu: secondaryGpuName,
     },
     cpu: {
-      name: detectedCpuSpec?.name || (formFactor.isLaptop ? "Intel Core i5-11400H" : "Intel Core i5-11400F"),
-      vendor: detectedCpuSpec?.vendor || "Intel",
-      cores: detectedCpuSpec?.cores || cores,
-      threads: detectedCpuSpec?.threads || cores,
-      tier: detectedCpuSpec?.tier || "B",
-      generation: detectedCpuSpec?.generation,
-      score: detectedCpuSpec?.score || 68,
-      isLaptop: detectedCpuSpec?.isLaptop ?? formFactor.isLaptop,
+      id: finalCpuSpec.id,
+      name: finalCpuSpec.name,
+      vendor: finalCpuSpec.vendor,
+      cores: finalCpuSpec.cores,
+      threads: finalCpuSpec.threads,
+      tier: finalCpuSpec.tier,
+      generation: finalCpuSpec.generation,
+      score: finalCpuSpec.score,
+      isLaptop: finalCpuSpec.isLaptop ?? formFactor.isLaptop,
     },
     ram: {
       gb: ramGb,
